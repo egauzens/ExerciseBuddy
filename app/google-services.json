@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "260438751610",
+    "firebase_url": "https://exercisebuddy-478e5.firebaseio.com",
+    "project_id": "exercisebuddy-478e5",
+    "storage_bucket": "exercisebuddy-478e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260438751610:android:5d3db63742c8ee59ed3ec3",
+        "android_client_info": {
+          "package_name": "com.bignerdranch.android.exercisebuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260438751610-8bikmrgj4qqg7rr1vcqfgatsbhl3ol62.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bignerdranch.android.exercisebuddy",
+            "certificate_hash": "8b9d57128898a93ae3c1033d5dd596be5dadc233"
+          }
+        },
+        {
+          "client_id": "260438751610-o2npa99u4d6viej8b4j2r2ghhg3r5se2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5seR7AxYwMAufkott64QwTl0aX8m9DQk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260438751610-o2npa99u4d6viej8b4j2r2ghhg3r5se2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
