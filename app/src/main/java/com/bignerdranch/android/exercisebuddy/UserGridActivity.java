@@ -1,7 +1,9 @@
 package com.bignerdranch.android.exercisebuddy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -11,12 +13,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserGridActivity extends AppCompatActivity {
     private RecyclerView mUserGrid;
     private GridItemAdapter mAdpater;
+    private List<String> mUsernames = new ArrayList<>();
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,19 +37,21 @@ public class UserGridActivity extends AppCompatActivity {
 
         mUserGrid = findViewById(R.id.recycler_view);
         mUserGrid.setLayoutManager(new GridLayoutManager(getApplicationContext(), 3));
-
-        updateUI();
+        mAuth = FirebaseAuth.getInstance();
+        checkUserGender();
     }
 
     private void updateUI(){
-        List<String> usernames = new ArrayList<>();
-        usernames.add("Eric");
-        usernames.add("David");
-        usernames.add("Danny");
-        usernames.add("Amanda");
-
-        mAdpater = new GridItemAdapter(usernames);
+        mAdpater = new GridItemAdapter(mUsernames);
         mUserGrid.setAdapter(mAdpater);
+    }
+
+    public void logoutUser(View v){
+        mAuth.signOut();
+        Intent intent = new Intent(UserGridActivity.this, LoginOrRegisterActivity.class);
+        startActivity(intent);
+        finish();
+        return;
     }
 
     private class GridItemHolder extends RecyclerView.ViewHolder{
@@ -79,5 +93,109 @@ public class UserGridActivity extends AppCompatActivity {
         public int getItemCount() {
             return mUsernames.size();
         }
+    }
+
+    private String userGender;
+    private String oppositeUserGender;
+    public void checkUserGender(){
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        DatabaseReference maleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Male");
+
+        maleDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.getKey().equals(user.getUid())){
+                    userGender = "Male";
+                    oppositeUserGender = "Female";
+                    updateOppositeGenderUsers();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference femaleDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Female");
+
+        femaleDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.getKey().equals(user.getUid())){
+                    userGender = "Female";
+                    oppositeUserGender = "Male";
+                    updateOppositeGenderUsers();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void updateOppositeGenderUsers(){
+        DatabaseReference oppositeGenderDb = FirebaseDatabase.getInstance().getReference().child("Users").child(oppositeUserGender);
+        oppositeGenderDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.exists()){
+                    mUsernames.add(dataSnapshot.child("Name").getValue().toString());
+                    updateUI();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }

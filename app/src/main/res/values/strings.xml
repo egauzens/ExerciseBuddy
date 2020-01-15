@@ -6,4 +6,8 @@
     <string name="password">Password</string>
     <string name="registration_error">Registration error</string>
     <string name="login_error">Login error</string>
+    <string name="name">First name</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="logout">Logout</string>
 </resources>
