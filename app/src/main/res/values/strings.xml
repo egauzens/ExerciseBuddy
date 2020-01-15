@@ -10,4 +10,6 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="logout">Logout</string>
+    <string name="profile">Profile</string>
+    <string name="update">Update</string>
 </resources>

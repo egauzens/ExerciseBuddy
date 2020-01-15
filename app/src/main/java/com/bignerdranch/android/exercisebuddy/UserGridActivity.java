@@ -46,6 +46,13 @@ public class UserGridActivity extends AppCompatActivity {
         mUserGrid.setAdapter(mAdpater);
     }
 
+    public void goToUserProfile(View v){
+        Intent intent = new Intent(UserGridActivity.this, UserProfileActivity.class);
+        intent.putExtra("userGender", userGender);
+        startActivity(intent);
+        return;
+    }
+
     public void logoutUser(View v){
         mAuth.signOut();
         Intent intent = new Intent(UserGridActivity.this, LoginOrRegisterActivity.class);
