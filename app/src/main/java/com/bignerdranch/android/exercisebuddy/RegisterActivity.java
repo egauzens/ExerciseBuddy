@@ -55,6 +55,7 @@ public class RegisterActivity extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.password);
         mName = (EditText) findViewById(R.id.name);
         mGenderRadioGroup = (RadioGroup) findViewById(R.id.gender_radio_group);
+        mGenderRadioGroup.check(mGenderRadioGroup.getChildAt(0).getId());
 
         mRegister.setOnClickListener(new View.OnClickListener(){
             @Override
