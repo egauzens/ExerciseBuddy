@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,11 +39,11 @@ import java.util.Map;
 
 public class UserProfileActivity extends AppCompatActivity {
     private EditText mName;
-    private Button mUpdate;
     private ImageView mProfileImage;
+    private RadioGroup mGenderRadioGroup;
     private FirebaseAuth mAuth;
     private DatabaseReference mUserDatabase;
-    private String name, profileImageUrl, userId;
+    private String name, profileImageUrl, userId, gender;
     private Uri resultUri;
 
     @Override
@@ -49,13 +51,13 @@ public class UserProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
 
-        String userGender = getIntent().getExtras().getString("userGender");
         mName = (EditText) findViewById(R.id.name);
         mProfileImage = (ImageView) findViewById(R.id.profile_view);
+        mGenderRadioGroup = (RadioGroup) findViewById(R.id.gender_radio_group);
 
         mAuth = FirebaseAuth.getInstance();
         userId = mAuth.getCurrentUser().getUid();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userGender).child(userId);
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
 
         populateUserInfo();
     }
@@ -74,6 +76,17 @@ public class UserProfileActivity extends AppCompatActivity {
                         profileImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
                     }
+                    if (map.get("Gender") != null){
+                        gender = map.get("Gender").toString();
+                        for (int i=0;i<mGenderRadioGroup.getChildCount();i++) {
+                            RadioButton button = (RadioButton)mGenderRadioGroup.getChildAt(i);
+                            if (button.getText().equals(gender))
+                            {
+                                mGenderRadioGroup.check(button.getId());
+                                break;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -86,7 +99,11 @@ public class UserProfileActivity extends AppCompatActivity {
 
     public void updateUserInformation(View v){
         name = mName.getText().toString();
+        int genderId = mGenderRadioGroup.getCheckedRadioButtonId();
+        final RadioButton genderRadioButton = (RadioButton) findViewById(genderId);
+        gender = genderRadioButton.getText().toString();
         Map userInfo = new HashMap();
+        userInfo.put("Gender", gender);
         userInfo.put("Name", name);
         mUserDatabase.updateChildren(userInfo);
         if(resultUri == null){

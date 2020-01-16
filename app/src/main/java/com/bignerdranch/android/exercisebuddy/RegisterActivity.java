@@ -59,7 +59,7 @@ public class RegisterActivity extends AppCompatActivity {
         mRegister.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                int genderId = mGenderRadioGroup.getCheckedRadioButtonId();
+                final int genderId = mGenderRadioGroup.getCheckedRadioButtonId();
                 final RadioButton genderRadioButton = (RadioButton) findViewById(genderId);
                 if (genderRadioButton.getText() == null){
                     return;
@@ -67,6 +67,7 @@ public class RegisterActivity extends AppCompatActivity {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
                 final String name = mName.getText().toString();
+                final String gender = genderRadioButton.getText().toString();
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -75,8 +76,9 @@ public class RegisterActivity extends AppCompatActivity {
                         }
                         else{
                             String userId = mAuth.getCurrentUser().getUid();
-                            DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(genderRadioButton.getText().toString()).child(userId).child("Name");
-                            currentUserDatabase.setValue(name);
+                            DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+                            currentUserDatabase.child("Name").setValue(name);
+                            currentUserDatabase.child("Gender").setValue(gender);
                         }
                     }
                 });
