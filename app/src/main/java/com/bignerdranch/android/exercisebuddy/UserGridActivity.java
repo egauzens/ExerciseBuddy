@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -27,7 +29,7 @@ import java.util.List;
 public class UserGridActivity extends AppCompatActivity {
     private RecyclerView mUserGrid;
     private GridItemAdapter mAdpater;
-    private List<String> mUsernames = new ArrayList<>();
+    private List<UserGridItem> mUserGridItems = new ArrayList<>();
     private FirebaseAuth mAuth;
 
     @Override
@@ -42,7 +44,7 @@ public class UserGridActivity extends AppCompatActivity {
     }
 
     private void updateUI(){
-        mAdpater = new GridItemAdapter(mUsernames);
+        mAdpater = new GridItemAdapter(mUserGridItems);
         mUserGrid.setAdapter(mAdpater);
     }
 
@@ -63,23 +65,28 @@ public class UserGridActivity extends AppCompatActivity {
 
     private class GridItemHolder extends RecyclerView.ViewHolder{
         private TextView mUsernameTextView;
+        private ImageView mUserImage;
 
         public GridItemHolder(LayoutInflater inflater, ViewGroup parent){
             super(inflater.inflate(R.layout.grid_item_user, parent, false));
 
             mUsernameTextView = (TextView) itemView.findViewById(R.id.username);
+            mUserImage = (ImageView) itemView.findViewById(R.id.user_image);
         }
 
-        public void bind(String username){
-            mUsernameTextView.setText(username);
+        public void bind(UserGridItem userGridItem){
+            mUsernameTextView.setText(userGridItem.getName());
+            if (!userGridItem.getUserImageUrl().isEmpty()) {
+                Glide.with(getApplicationContext()).load(userGridItem.getUserImageUrl()).into(mUserImage);
+            }
         }
     }
 
     private class GridItemAdapter extends RecyclerView.Adapter<GridItemHolder> {
-        private List<String> mUsernames;
+        private List<UserGridItem> mUserGridItems;
 
-        public GridItemAdapter(List<String> usernames){
-            mUsernames = usernames;
+        public GridItemAdapter(List<UserGridItem> userGridItems){
+            mUserGridItems = userGridItems;
         }
 
         @NonNull
@@ -92,13 +99,13 @@ public class UserGridActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull GridItemHolder holder, int position) {
-            String username = mUsernames.get(position);
-            holder.bind(username);
+            UserGridItem userGridItem = mUserGridItems.get(position);
+            holder.bind(userGridItem);
         }
 
         @Override
         public int getItemCount() {
-            return mUsernames.size();
+            return mUserGridItems.size();
         }
     }
 
@@ -179,10 +186,15 @@ public class UserGridActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.exists()){
-                    mUsernames.add(dataSnapshot.child("Name").getValue().toString());
+                    String imageUrl = "";
+                    if (dataSnapshot.hasChild("profileImageUrl")) {
+                        imageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                    }
+                    UserGridItem item = new UserGridItem(imageUrl,dataSnapshot.child("Name").getValue().toString(),0);
+                    mUserGridItems.add(item);
                     updateUI();
+                    }
                 }
-            }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
