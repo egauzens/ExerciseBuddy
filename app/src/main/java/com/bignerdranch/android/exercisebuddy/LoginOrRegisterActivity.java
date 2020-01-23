@@ -22,7 +22,7 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
     }
 
     public void goToRegistrationPage(View view) {
-        Intent intent = new Intent(LoginOrRegisterActivity.this, RegisterActivity.class);
+        Intent intent = new Intent(LoginOrRegisterActivity.this, ExerciseSelectionActivity.class);
         startActivity(intent);
         finish();
         return;

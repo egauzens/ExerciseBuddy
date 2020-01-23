@@ -9,7 +9,62 @@
     <string name="name">First name</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
+    <string name="anyone">Anyone</string>
     <string name="logout">Logout</string>
     <string name="profile">Profile</string>
     <string name="update">Update</string>
+    <string name="user_statement">I am a:</string>
+    <string name="born">Born on:</string>
+    <string name="user_experience_level">I would classify my experience level as:</string>
+    <string name="older_than">Older than: </string>
+    <string name="younger_than">And younger than: </string>
+    <string name="years_old">Years old</string>
+    <string name="preference_experience_level">With an experience level of:</string>
+    <string name="running">Running</string>
+    <string name="hiking">Hiking</string>
+    <string name="biking">Biking</string>
+    <string name="weight_lifting">Weight lifting</string>
+    <string name="swimming">Swimming</string>
+    <string name="rock_climbing">Rock Climbing</string>
+    <string name="choose_exercise">Choose an exercise you would like to find a buddy for:</string>
+    <string name="select_gender">Select your gender: </string>
+    <string name="select_experience_level">Select your level of experience:</string>
+    <string name="select_DOB">Select your date of birth: </string>
+    <string name="next">Continue</string>
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="advanced">Advanced</string>
+    <string name="no_preference">No preference</string>
+    <string name="lower_age_range">The youngest person I would exercise with is: </string>
+    <string name="upper_age_range">The oldest person I would exercise with is: </string>
+    <string name="select_gender_preference">What gender do you want your exercise buddy to be?</string>
+    <string name="upload_profile_image">Upload an image to be your profile picture (optional):</string>
+    <string name="select_experience_level_preference">What experience level do you want your exercise buddy to be?</string>
+    <string name="description_text">Tell us about yourself (optional):</string>
+    <string name="description_hint">Write something about yourself for others to read (optional)</string>
+    <string-array name="preference_experience_array">
+        <item>Any</item>
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+    </string-array>
+    <string-array name="experience_array">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+    </string-array>
+    <string name="gender_preference">I prefer to exercise with: </string>
+    <string-array name="gender_array">
+        <item>Males</item>
+        <item>Females</item>
+        <item>Anyone</item>
+    </string-array>
+    <string-array name="exercises_array">
+        <item>Hike</item>
+        <item>Bike</item>
+        <item>Run</item>
+        <item>Swim</item>
+        <item>Weight lift</item>
+        <item>Climb</item>
+    </string-array>
 </resources>

@@ -8,7 +8,7 @@ public class UserProfile {
     private Gender gender;
     private int activityLevel;
     private int experienceLevel;
-    private Exercise exercise;
+    private int exerciseIndex;
     private Preferences preferences;
 
     public UserProfile(){
@@ -70,12 +70,12 @@ public class UserProfile {
         this.experienceLevel = experienceLevel;
     }
 
-    public Exercise getExercise() {
-        return exercise;
+    public int getExerciseIndex() {
+        return exerciseIndex;
     }
 
-    public void setExercise(Exercise exercise) {
-        this.exercise = exercise;
+    public void setExercise(int exerciseIndex) {
+        this.exerciseIndex = exerciseIndex;
     }
 
     public Preferences getPreferences() {

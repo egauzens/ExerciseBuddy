@@ -18,6 +18,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ProfileImageActivity"/>
+        <activity android:name=".ExerciseSelectionActivity"/>
+        <activity android:name=".UserGenderSelectionActivity"/>
+        <activity android:name=".DateOfBirthSelectionActivity"/>
+        <activity android:name=".UserExperienceLevelSelectionActivity"/>
+        <activity android:name=".GenderPreferenceSelectionActivity"/>
+        <activity android:name=".AgeRangePreferenceSelectionActivity"/>
+        <activity android:name=".ExperienceLevelPreferenceSelectionActivity"/>
         <activity android:name=".LoginActivity"/>
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".UserGridActivity"/>

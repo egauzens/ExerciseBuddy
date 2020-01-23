@@ -9,14 +9,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.databinding.ActivityUserGridBinding;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class UserGridActivity extends AppCompatActivity {
     private UserGridActivityViewModel mViewModel;
-    private RecyclerView mUserGrid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -4,8 +4,6 @@ public class Preferences {
     private Gender gender;
     private int minimumAge;
     private int maximumAge;
-    private int minimumActivityLevel;
-    private int maximumActivityLevel;
     private int minimumExperienceLevel;
     private int maximumExperienceLevel;
     private int distance;
@@ -36,22 +34,6 @@ public class Preferences {
 
     public void setMaximumAge(int maximumAge) {
         this.maximumAge = maximumAge;
-    }
-
-    public int getMinimumActivityLevel() {
-        return minimumActivityLevel;
-    }
-
-    public void setMinimumActivityLevel(int minimumActivityLevel) {
-        this.minimumActivityLevel = minimumActivityLevel;
-    }
-
-    public int getMaximumActivityLevel() {
-        return maximumActivityLevel;
-    }
-
-    public void setMaximumActivityLevel(int maximumActivityLevel) {
-        this.maximumActivityLevel = maximumActivityLevel;
     }
 
     public int getMinimumExperienceLevel() {
