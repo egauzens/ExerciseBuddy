@@ -3,17 +3,17 @@ package com.bignerdranch.android.exercisebuddy;
 import androidx.lifecycle.ViewModel;
 
 public class UserExperienceLevelSelectionActivityViewModel extends ViewModel {
-    private int mUserExperienceLevelIndex;
+    private String mUserExperienceLevel;
 
     public UserExperienceLevelSelectionActivityViewModel(){
-        mUserExperienceLevelIndex = 0;
+        mUserExperienceLevel = "";
     }
 
-    public int getUserExperienceLevelIndex(){
-        return mUserExperienceLevelIndex;
+    public String getUserExperienceLevel(){
+        return mUserExperienceLevel;
     }
 
-    public void setUserExperienceLevelIndex(int index){
-        mUserExperienceLevelIndex = index;
+    public void setUserExperienceLevel(String level){
+        mUserExperienceLevel = level;
     }
 }

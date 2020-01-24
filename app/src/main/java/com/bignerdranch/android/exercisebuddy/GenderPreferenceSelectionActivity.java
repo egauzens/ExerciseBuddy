@@ -1,6 +1,5 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,30 +9,40 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.Arrays;
+
 public class GenderPreferenceSelectionActivity extends AppCompatActivity {
     private GenderPreferenceSelectionActivityViewModel mViewModel;
     private NumberPicker mGenderPreferencePicker;
+    private String[] mGenderPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(GenderPreferenceSelectionActivityViewModel.class);
+        mGenderPreferences = getGenderPreferences();
         setContentView(R.layout.activity_gender_preference_selection);
+        if (mViewModel.getGenderPreference() == ""){
+            initializeViewModel();
+        }
 
         mGenderPreferencePicker = (NumberPicker) findViewById(R.id.gender_preference_picker);
         setupGenderPreferencePicker();
     }
 
+    private void initializeViewModel(){
+        mViewModel.setGenderPreference(mGenderPreferences[0]);
+    }
+
     private void setupGenderPreferencePicker(){
-        String[] genderPreferences = getGenderPreferences(getApplicationContext());
         mGenderPreferencePicker.setMinValue(0);
-        mGenderPreferencePicker.setMaxValue(genderPreferences.length-1);
-        mGenderPreferencePicker.setDisplayedValues(genderPreferences);
-        mGenderPreferencePicker.setValue(mViewModel.getGenderPreferenceIndex());
+        mGenderPreferencePicker.setMaxValue(mGenderPreferences.length-1);
+        mGenderPreferencePicker.setDisplayedValues(mGenderPreferences);
+        mGenderPreferencePicker.setValue(Arrays.asList(mGenderPreferences).indexOf(mViewModel.getGenderPreference()));
         mGenderPreferencePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setGenderPreferenceIndex(newVal);
+                mViewModel.setGenderPreference(mGenderPreferences[newVal]);
             }
         });
     }
@@ -42,15 +51,13 @@ public class GenderPreferenceSelectionActivity extends AppCompatActivity {
         Intent currentIntent = getIntent();
         Intent newIntent = new Intent(GenderPreferenceSelectionActivity.this, AgeRangePreferenceSelectionActivity.class);
         Bundle extras = currentIntent.getExtras();
-        extras.putInt("genderPreferenceIndex", mViewModel.getGenderPreferenceIndex());
+        extras.putString("genderPreference", mViewModel.getGenderPreference());
         newIntent.putExtras(extras);
         startActivity(newIntent);
         return;
     }
 
-    public static String[] getGenderPreferences(Context context){
-        return new String[] {context.getString(R.string.no_preference),
-                context.getString(R.string.male),
-                context.getString(R.string.female)};
+    public String[] getGenderPreferences(){
+        return UserSelections.UserPreferences.genderPreferences(getApplicationContext());
     }
 }

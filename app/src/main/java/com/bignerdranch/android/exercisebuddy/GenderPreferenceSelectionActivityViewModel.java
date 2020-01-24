@@ -3,17 +3,17 @@ package com.bignerdranch.android.exercisebuddy;
 import androidx.lifecycle.ViewModel;
 
 public class GenderPreferenceSelectionActivityViewModel extends ViewModel {
-    private int mGenderPreferenceIndex;
+    private String mGenderPreference;
 
     public GenderPreferenceSelectionActivityViewModel(){
-        mGenderPreferenceIndex = 0;
+        mGenderPreference = "";
     }
 
-    public int getGenderPreferenceIndex(){
-        return mGenderPreferenceIndex;
+    public String getGenderPreference(){
+        return mGenderPreference;
     }
 
-    public void setGenderPreferenceIndex(int index){
-        mGenderPreferenceIndex = index;
+    public void setGenderPreference(String gender){
+        mGenderPreference = gender;
     }
 }

@@ -7,6 +7,8 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class LoginOrRegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,9 +24,9 @@ public class LoginOrRegisterActivity extends AppCompatActivity {
     }
 
     public void goToRegistrationPage(View view) {
+        FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(LoginOrRegisterActivity.this, ExerciseSelectionActivity.class);
         startActivity(intent);
-        finish();
         return;
     }
 }

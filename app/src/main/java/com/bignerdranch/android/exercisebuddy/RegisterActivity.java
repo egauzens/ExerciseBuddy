@@ -106,14 +106,14 @@ public class RegisterActivity extends AppCompatActivity {
         Map userInfo = new HashMap();
         String profileImageUrl = extras.getString("profileImageUrl");
         userInfo.put("profileImageUri", profileImageUrl);
-        userInfo.put("exerciseIndex", extras.getInt("exerciseIndex"));
-        userInfo.put("userGenderIndex", extras.getInt("userGenderIndex"));
+        userInfo.put("exercise", extras.getString("exercise"));
+        userInfo.put("userGender", extras.getString("userGender"));
         userInfo.put("dateOfBirth", convertCalendarToString ((Calendar) extras.getSerializable("dateOfBirth")));
-        userInfo.put("userExperienceLevelIndex", extras.getInt("userExperienceLevelIndex"));
-        userInfo.put("genderPreferenceIndex", extras.getInt("genderPreferenceIndex"));
+        userInfo.put("userExperienceLevel", extras.getString("userExperienceLevel"));
+        userInfo.put("genderPreference", extras.getString("genderPreference"));
         userInfo.put("lowerAgePreference", extras.getInt("lowerAgePreference"));
         userInfo.put("upperAgePreference", extras.getInt("upperAgePreference"));
-        userInfo.put("experienceLevelPreferenceIndex", extras.getInt("experienceLevelPreferenceIndex"));
+        userInfo.put("experienceLevelPreference", extras.getString("experienceLevelPreference"));
         userInfo.put("userDescription", extras.getString("userDescription"));
         loadProfileImageIntoStorage(profileImageUrl);
 
@@ -121,10 +121,11 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean loadProfileImageIntoStorage(String imageUrl){
-        Uri imageUri = Uri.parse(imageUrl);
-        if (imageUri == null) {
+        if (imageUrl.isEmpty()) {
             return false;
-        } else {
+        }
+        else {
+            Uri imageUri = Uri.parse(imageUrl);
             Bitmap bitmap = null;
             String userId = mAuth.getCurrentUser().getUid();
             final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);

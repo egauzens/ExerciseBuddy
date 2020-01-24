@@ -3,17 +3,17 @@ package com.bignerdranch.android.exercisebuddy;
 import androidx.lifecycle.ViewModel;
 
 public class ExperienceLevelPreferenceSelectionActivityViewModel extends ViewModel {
-    private int mExperienceLevelPreferenceIndex;
+    private String mExperienceLevelPreference;
 
     public ExperienceLevelPreferenceSelectionActivityViewModel(){
-        mExperienceLevelPreferenceIndex = 0;
+        mExperienceLevelPreference = "";
     }
 
-    public int getExperienceLevelPreferenceIndex(){
-        return mExperienceLevelPreferenceIndex;
+    public String getExperienceLevelPreference(){
+        return mExperienceLevelPreference;
     }
 
-    public void setExperienceLevelPreferenceIndex(int index){
-        mExperienceLevelPreferenceIndex = index;
+    public void setExperienceLevelPreference(String level){
+        mExperienceLevelPreference = level;
     }
 }

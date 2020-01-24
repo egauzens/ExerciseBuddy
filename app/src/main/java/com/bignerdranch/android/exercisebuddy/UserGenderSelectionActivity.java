@@ -1,6 +1,5 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,14 +9,21 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.Arrays;
+
 public class UserGenderSelectionActivity extends AppCompatActivity {
     private UserGenderSelectionActivityViewModel mViewModel;
     private NumberPicker mUserGenderPicker;
+    private String[] mGenders;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UserGenderSelectionActivityViewModel.class);
+        mGenders = getUserGenders();
+        if (mViewModel.getUserGender().isEmpty()){
+            initializeViewModel();
+        }
         setContentView(R.layout.activity_user_gender_selection);
 
         mUserGenderPicker = (NumberPicker) findViewById(R.id.user_gender_picker);
@@ -25,31 +31,33 @@ public class UserGenderSelectionActivity extends AppCompatActivity {
     }
 
     private void setupUserGenderPicker(){
-        String[] genders = getUserGenders(getApplicationContext());
         mUserGenderPicker.setMinValue(0);
-        mUserGenderPicker.setMaxValue(genders.length-1);
-        mUserGenderPicker.setDisplayedValues(genders);
-        mUserGenderPicker.setValue(mViewModel.getUserGenderIndex());
+        mUserGenderPicker.setMaxValue(mGenders.length-1);
+        mUserGenderPicker.setDisplayedValues(mGenders);
+        mUserGenderPicker.setValue(Arrays.asList(mGenders).indexOf(mViewModel.getUserGender()));
         mUserGenderPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setUserGenderIndex(newVal);
+                mViewModel.setUserGender(mGenders[newVal]);
             }
         });
+    }
+
+    private void initializeViewModel(){
+        mViewModel.setUserGender(mGenders[0]);
     }
 
     public void goToDateOfBirthSelection(View v){
         Intent currentIntent = getIntent();
         Intent newIntent = new Intent(UserGenderSelectionActivity.this, DateOfBirthSelectionActivity.class);
         Bundle extras = currentIntent.getExtras();
-        extras.putInt("userGenderIndex", mViewModel.getUserGenderIndex());
+        extras.putString("userGender", mViewModel.getUserGender());
         newIntent.putExtras(extras);
         startActivity(newIntent);
         return;
     }
 
-    public static String[] getUserGenders(Context context){
-        return new String[] {context.getString(R.string.male),
-            context.getString(R.string.female)};
+    private String[] getUserGenders(){
+        return UserSelections.UserInformation.userGenders(getApplicationContext());
     }
 }

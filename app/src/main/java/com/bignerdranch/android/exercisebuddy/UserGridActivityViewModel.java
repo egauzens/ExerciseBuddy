@@ -1,7 +1,5 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.ObservableArrayList;
@@ -22,7 +20,6 @@ public class UserGridActivityViewModel extends ViewModel {
     private String oppositeUserGender;
 
     public UserGridActivityViewModel(){
-        Log.d("UserGridActivityVM", "view model created");
         mUserGridItems = new ObservableArrayList<>();
 
         checkUserGender();
@@ -34,14 +31,14 @@ public class UserGridActivityViewModel extends ViewModel {
 
     public void checkUserGender(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("Users").child(user.getUid());
+        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
 
         userDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    DataSnapshot genderDataSnapshot = dataSnapshot.child("Gender");
-                    if (genderDataSnapshot == null || genderDataSnapshot.getValue() == null) {
+                    DataSnapshot genderDataSnapshot = dataSnapshot.child("userGender");
+                    if (genderDataSnapshot == null) {
                         return;
                     }
                     userGender = genderDataSnapshot.getValue().toString();
@@ -53,7 +50,6 @@ public class UserGridActivityViewModel extends ViewModel {
                             oppositeUserGender = "Male";
                             break;
                     }
-                    Log.d("checkUserGender", "Gender updated");
                     updateDisplayedUsers();
                 }
             }
@@ -67,20 +63,19 @@ public class UserGridActivityViewModel extends ViewModel {
 
 
     public void updateDisplayedUsers(){
-        FirebaseDatabase.getInstance().getReference().child("Users").addChildEventListener(new ChildEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("users").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (dataSnapshot.exists()) {
                     if (!dataSnapshot.getKey().equals(user.getUid())) {
                         String imageUrl = "";
-                        if (dataSnapshot.hasChild("profileImageUrl")) {
-                            imageUrl = dataSnapshot.child("profileImageUrl").getValue().toString();
+                        if (dataSnapshot.hasChild("profileImageUri")) {
+                            imageUrl = dataSnapshot.child("profileImageUri").getValue().toString();
                         }
-                        String gender = dataSnapshot.child("Gender").getValue().toString();
-                        String name = dataSnapshot.child("Name").getValue().toString();
+                        String gender = dataSnapshot.child("userGender").getValue().toString();
+                        String name = dataSnapshot.child("name").getValue().toString();
                         UserGridItem item = new UserGridItem(gender, imageUrl, name, 0);
-                        Log.d("updateDisplayedUsers", "item added");
                         mUserGridItems.add(item);
                     }
                 }

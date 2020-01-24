@@ -3,17 +3,17 @@ package com.bignerdranch.android.exercisebuddy;
 import androidx.lifecycle.ViewModel;
 
 public class ExerciseSelectionActivityViewModel extends ViewModel {
-    private int mExerciseIndex;
+    private String mExercise;
 
     public ExerciseSelectionActivityViewModel(){
-        mExerciseIndex = 0;
+        mExercise = "";
     }
 
-    public int getExerciseIndex(){
-        return mExerciseIndex;
+    public String getExercise(){
+        return mExercise;
     }
 
-    public void setExerciseSelection(int index){
-        mExerciseIndex = index;
+    public void setExercise(String exercise){
+        mExercise = exercise;
     }
 }

@@ -1,6 +1,5 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,30 +9,40 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.Arrays;
+
 public class UserExperienceLevelSelectionActivity extends AppCompatActivity {
     private UserExperienceLevelSelectionActivityViewModel mViewModel;
     private NumberPicker mUserExperienceLevelPicker;
+    private String[] mUserExperienceLevels;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UserExperienceLevelSelectionActivityViewModel.class);
+        mUserExperienceLevels = getUserExperienceLevels();
         setContentView(R.layout.activity_user_experience_level_selection);
+        if (mViewModel.getUserExperienceLevel() == ""){
+            initializeViewModel();
+        }
 
         mUserExperienceLevelPicker = (NumberPicker) findViewById(R.id.user_experience_level_picker);
         setupUserGenderPicker();
     }
 
+    private void initializeViewModel(){
+        mViewModel.setUserExperienceLevel(mUserExperienceLevels[0]);
+    }
+
     private void setupUserGenderPicker(){
-        String[] experienceLevels = getUserExperienceLevels(getApplicationContext());
         mUserExperienceLevelPicker.setMinValue(0);
-        mUserExperienceLevelPicker.setMaxValue(experienceLevels.length-1);
-        mUserExperienceLevelPicker.setDisplayedValues(experienceLevels);
-        mUserExperienceLevelPicker.setValue(mViewModel.getUserExperienceLevelIndex());
+        mUserExperienceLevelPicker.setMaxValue(mUserExperienceLevels.length-1);
+        mUserExperienceLevelPicker.setDisplayedValues(mUserExperienceLevels);
+        mUserExperienceLevelPicker.setValue(Arrays.asList(mUserExperienceLevels).indexOf(mViewModel.getUserExperienceLevel()));
         mUserExperienceLevelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setUserExperienceLevelIndex(newVal);
+            mViewModel.setUserExperienceLevel(mUserExperienceLevels[newVal]);
             }
         });
     }
@@ -42,15 +51,13 @@ public class UserExperienceLevelSelectionActivity extends AppCompatActivity {
         Intent currentIntent = getIntent();
         Intent newIntent = new Intent(UserExperienceLevelSelectionActivity.this, GenderPreferenceSelectionActivity.class);
         Bundle extras = currentIntent.getExtras();
-        extras.putInt("userExperienceLevelIndex", mViewModel.getUserExperienceLevelIndex());
+        extras.putString("userExperienceLevelIndex", mViewModel.getUserExperienceLevel());
         newIntent.putExtras(extras);
         startActivity(newIntent);
         return;
     }
 
-    public static String[] getUserExperienceLevels(Context context){
-        return new String[] {context.getString(R.string.beginner),
-                context.getString(R.string.intermediate),
-                context.getString(R.string.advanced)};
+    public String[] getUserExperienceLevels(){
+        return UserSelections.UserInformation.getUserExperienceLevels(getApplicationContext());
     }
 }

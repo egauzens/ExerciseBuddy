@@ -1,6 +1,5 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,47 +9,55 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import java.util.Arrays;
+
 public class ExerciseSelectionActivity extends AppCompatActivity {
     private ExerciseSelectionActivityViewModel mViewModel;
-    private NumberPicker mUserGenderPicker;
+    private NumberPicker mExercisePicker;
+    private String[] mExercises;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(ExerciseSelectionActivityViewModel.class);
+        mExercises = getExercises();
+        if (mViewModel.getExercise().isEmpty()){
+            initializeViewModel();
+        }
         setContentView(R.layout.activity_exercise_selection);
 
-        mUserGenderPicker = (NumberPicker) findViewById(R.id.exercise_picker);
+        mExercisePicker = (NumberPicker) findViewById(R.id.exercise_picker);
         setupExercisePicker();
     }
 
+    private void initializeViewModel(){
+        mViewModel.setExercise(mExercises[0]);
+    }
+
     private void setupExercisePicker(){
-        String[] exercises = getExercises(getApplicationContext());
-        mUserGenderPicker.setMinValue(0);
-        mUserGenderPicker.setMaxValue(exercises.length-1);
-        mUserGenderPicker.setDisplayedValues(exercises);
-        mUserGenderPicker.setValue(mViewModel.getExerciseIndex());
-        mUserGenderPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        String[] exercises = getExercises();
+        mExercisePicker.setMinValue(0);
+        mExercisePicker.setMaxValue(exercises.length-1);
+        mExercisePicker.setDisplayedValues(exercises);
+        mExercisePicker.setValue(Arrays.asList(mExercises).indexOf(mViewModel.getExercise()));
+        mExercisePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setExerciseSelection(newVal);
+                mViewModel.setExercise(mExercises[newVal]);
             }
         });
     }
 
     public void goToGenderSelection(View v){
         Intent intent = new Intent(ExerciseSelectionActivity.this, UserGenderSelectionActivity.class);
-        intent.putExtra("exerciseIndex", mViewModel.getExerciseIndex());
+        Bundle extras = new Bundle();
+        extras.putString("exercise", mViewModel.getExercise());
+        intent.putExtras(extras);
         startActivity(intent);
         return;
     }
 
-    public static String[] getExercises(Context context){
-        return new String[] {context.getString(R.string.biking),
-                context.getString(R.string.running),
-                context.getString(R.string.rock_climbing),
-                context.getString(R.string.swimming),
-                context.getString(R.string.weight_lifting),
-                context.getString(R.string.hiking)};
+    public String[] getExercises(){
+        return UserSelections.UserInformation.exercises(getApplicationContext());
     }
 }
