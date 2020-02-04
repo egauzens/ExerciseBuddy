@@ -36,6 +36,7 @@ public class ExperienceLevelPreferenceSelectionActivity extends AppCompatActivit
     }
 
     private void setupExperienceLevelPreferencePicker(){
+        mExperienceLevelPreferencePicker.setWrapSelectorWheel(false);
         mExperienceLevelPreferencePicker.setMinValue(0);
         mExperienceLevelPreferencePicker.setMaxValue(mExperienceLevelPreferences.length-1);
         mExperienceLevelPreferencePicker.setDisplayedValues(mExperienceLevelPreferences);

@@ -3,35 +3,87 @@
     <data>
         <variable
             name="viewModel"
-            type="com.bignerdranch.android.exercisebuddy.AgeRangePreferenceSelectionActivityViewModel" />
+            type="com.bignerdranch.android.exercisebuddy.UpdateUserPreferencesActivityViewModel" />
     </data>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="20dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:orientation="vertical">
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:columnCount="2"
-                android:rowCount="2">
+                android:rowCount="5">
                 <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:layout_row="0"
+                    android:text="@string/update_exercise_preference"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_columnWeight="1"
+                    android:textAlignment="viewEnd"/>
+                <NumberPicker
+                    android:id="@+id/update_exercise_picker"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:layout_columnWeight="1" />
+                <TextView
+                    android:layout_column="0"
+                    android:layout_row="1"
                     android:layout_columnWeight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textAlignment="viewEnd"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/lower_age_range"
-                    android:layout_gravity="center_vertical"/>
+                    android:text="@string/update_gender_preference"
+                    android:layout_gravity="center_vertical"
+                    android:textAlignment="viewEnd"/>
+                <NumberPicker
+                    android:id="@+id/update_gender_preference_picker"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:layout_columnWeight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="0"
+                    android:layout_row="2"
+                    android:text="@string/update_experience_level_preference"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_columnWeight="1"
+                    android:textAlignment="viewEnd"/>
+                <NumberPicker
+                    android:id="@+id/update_experience_level_preference_picker"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_column="1"
+                    android:layout_row="2"
+                    android:layout_columnWeight="1"/>
+                <TextView
+                android:layout_column="0"
+                android:layout_row="3"
+                android:layout_columnWeight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewEnd"
+                android:layout_marginEnd="10dp"
+                android:text="@string/lower_age_range"
+                android:layout_gravity="center_vertical"/>
                 <LinearLayout
                     android:layout_column="1"
-                    android:layout_row="0"
+                    android:layout_row="3"
                     android:layout_columnWeight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -50,7 +102,7 @@
                 </LinearLayout>
                 <TextView
                     android:layout_column="0"
-                    android:layout_row="1"
+                    android:layout_row="4"
                     android:layout_columnWeight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -60,7 +112,7 @@
                     android:layout_gravity="center_vertical"/>
                 <LinearLayout
                     android:layout_column="1"
-                    android:layout_row="1"
+                    android:layout_row="4"
                     android:layout_columnWeight="1"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -83,8 +135,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_gravity="center_horizontal"
-                android:text="@string/next"
-                android:onClick="goToExperienceLevelPreferenceSelection"/>
+                android:text="@string/update_preferences"
+                android:onClick="updateUserPreferences"/>
         </LinearLayout>
     </ScrollView>
 </layout>

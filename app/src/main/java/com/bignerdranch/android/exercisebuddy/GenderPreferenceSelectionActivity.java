@@ -35,6 +35,7 @@ public class GenderPreferenceSelectionActivity extends AppCompatActivity {
     }
 
     private void setupGenderPreferencePicker(){
+        mGenderPreferencePicker.setWrapSelectorWheel(false);
         mGenderPreferencePicker.setMinValue(0);
         mGenderPreferencePicker.setMaxValue(mGenderPreferences.length-1);
         mGenderPreferencePicker.setDisplayedValues(mGenderPreferences);
@@ -42,7 +43,7 @@ public class GenderPreferenceSelectionActivity extends AppCompatActivity {
         mGenderPreferencePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setGenderPreference(mGenderPreferences[newVal]);
+            mViewModel.setGenderPreference(mGenderPreferences[newVal]);
             }
         });
     }

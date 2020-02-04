@@ -8,7 +8,7 @@ import java.util.List;
 public class CustomViewBindings {
 
     @BindingAdapter("data")
-    public static void bindRecyclerViewAdapter(RecyclerView view, List<UserGridItem> items) {
+    public static void bindRecyclerViewAdapter(RecyclerView view, List<User> items) {
         view.setLayoutManager(new GridLayoutManager(view.getContext(), 3));
         GridItemAdapter adapter = new GridItemAdapter(view.getContext(), items);
         view.setAdapter(adapter);

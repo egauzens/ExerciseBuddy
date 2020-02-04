@@ -30,6 +30,7 @@
         <activity android:name=".RegisterActivity"/>
         <activity android:name=".UserGridActivity"/>
         <activity android:name=".UserProfileActivity"/>
+        <activity android:name=".UpdateUserPreferencesActivity"/>
     </application>
 
 </manifest>

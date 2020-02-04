@@ -35,13 +35,18 @@
     <string name="intermediate">Intermediate</string>
     <string name="advanced">Advanced</string>
     <string name="no_preference">No preference</string>
-    <string name="lower_age_range">The youngest person I would exercise with is: </string>
-    <string name="upper_age_range">The oldest person I would exercise with is: </string>
+    <string name="lower_age_range">The youngest person I would exercise with is:</string>
+    <string name="upper_age_range">The oldest person I would exercise with is:</string>
     <string name="select_gender_preference">What gender do you want your exercise buddy to be?</string>
     <string name="upload_profile_image">Upload an image to be your profile picture (optional):</string>
     <string name="select_experience_level_preference">What experience level do you want your exercise buddy to be?</string>
     <string name="description_text">Tell us about yourself (optional):</string>
     <string name="description_hint">Write something about yourself for others to read (optional)</string>
+    <string name="update_exercise_preference">I want to go:</string>
+    <string name="update_gender_preference">My gender preference to exercise with is:</string>
+    <string name="update_experience_level_preference">My experience level preference to exercise with is:</string>
+    <string name="edit_preferences">Edit preferences</string>
+    <string name="update_preferences">Update preferences</string>
     <string-array name="preference_experience_array">
         <item>Any</item>
         <item>Beginner</item>

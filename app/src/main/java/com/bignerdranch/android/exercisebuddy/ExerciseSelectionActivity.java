@@ -36,6 +36,7 @@ public class ExerciseSelectionActivity extends AppCompatActivity {
 
     private void setupExercisePicker(){
         String[] exercises = getExercises();
+        mExercisePicker.setWrapSelectorWheel(false);
         mExercisePicker.setMinValue(0);
         mExercisePicker.setMaxValue(exercises.length-1);
         mExercisePicker.setDisplayedValues(exercises);

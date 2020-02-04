@@ -1,7 +1,6 @@
 package com.bignerdranch.android.exercisebuddy;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -16,12 +15,12 @@ import java.util.List;
 
 public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridItemHolder> {
 
-    private List<UserGridItem> mUserGridItems;
+    private List<User> mUserMatches;
     private Context mContext;
 
-    public GridItemAdapter(Context context, List<UserGridItem> userGridItems){
+    public GridItemAdapter(Context context, List<User> userMatches){
         mContext = context;
-        mUserGridItems = userGridItems;
+        mUserMatches = userMatches;
     }
 
     @NonNull
@@ -34,13 +33,13 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
 
     @Override
     public void onBindViewHolder(@NonNull GridItemHolder holder, int position) {
-        UserGridItem userGridItem = mUserGridItems.get(position);
-        holder.bind(userGridItem);
+        User userMatch = mUserMatches.get(position);
+        holder.bind(userMatch);
     }
 
     @Override
     public int getItemCount() {
-        return mUserGridItems.size();
+        return mUserMatches.size();
     }
 
     class GridItemHolder extends RecyclerView.ViewHolder{
@@ -54,10 +53,10 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
             mUserImage = (ImageView) itemView.findViewById(R.id.user_image);
         }
 
-        public void bind(UserGridItem userGridItem){
-            mUsernameTextView.setText(userGridItem.getName());
-            if (!userGridItem.getUserImageUrl().isEmpty()) {
-                Glide.with(mContext).load(userGridItem.getUserImageUrl()).into(mUserImage);
+        public void bind(User userMatch){
+            mUsernameTextView.setText(userMatch.getName());
+            if (!userMatch.getProfileImageUri().isEmpty()) {
+                Glide.with(mContext).load(userMatch.getProfileImageUri()).into(mUserImage);
             }
         }
     }

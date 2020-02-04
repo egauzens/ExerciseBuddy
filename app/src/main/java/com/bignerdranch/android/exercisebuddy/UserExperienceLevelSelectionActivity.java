@@ -51,7 +51,7 @@ public class UserExperienceLevelSelectionActivity extends AppCompatActivity {
         Intent currentIntent = getIntent();
         Intent newIntent = new Intent(UserExperienceLevelSelectionActivity.this, GenderPreferenceSelectionActivity.class);
         Bundle extras = currentIntent.getExtras();
-        extras.putString("userExperienceLevelIndex", mViewModel.getUserExperienceLevel());
+        extras.putString("userExperienceLevel", mViewModel.getUserExperienceLevel());
         newIntent.putExtras(extras);
         startActivity(newIntent);
         return;

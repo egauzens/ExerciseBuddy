@@ -24,6 +24,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:text="@string/edit_preferences"
+                            android:onClick="editUserPreferences"/>
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:text="@string/logout"
                             android:onClick="logoutUser"/>
                 </LinearLayout>
@@ -32,6 +38,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    data="@{viewModel.userGridItems}"/>
+                    data="@{viewModel.userMatches}" />
         </LinearLayout>
 </layout>
