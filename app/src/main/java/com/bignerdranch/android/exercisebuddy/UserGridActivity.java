@@ -49,8 +49,7 @@ public class UserGridActivity extends AppCompatActivity {
             if (data.hasExtra("newUserData")){
                 User newUserData = (User) data.getSerializableExtra("newUserData");
                 if (!mViewModel.getCurrentUser().arePreferencesEqual(newUserData)){
-                    //update database
-                    mViewModel.setCurrentUser(newUserData);
+                    mViewModel.updateDatabase(newUserData);
                 }
             }
         }

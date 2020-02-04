@@ -187,8 +187,8 @@ public class User implements Serializable {
         if (minAge > mAge || maxAge < mAge){
             return false;
         }
-        String experienceLevel = user.getExperienceLevelPreference();
-        if (!experienceLevel.equals("No preference") && !experienceLevel.equals(mExperienceLevel)){
+        String experienceLevelPreference = user.getExperienceLevelPreference();
+        if (!experienceLevelPreference.equals("No preference") && !experienceLevelPreference.equals(mExperienceLevel)){
             return false;
         }
         return true;
@@ -201,7 +201,7 @@ public class User implements Serializable {
         if (!user.getGenderPreference().equals(mGenderPreference)){
             return false;
         }
-        if (!user.getExperienceLevelPreference().equals(mExperienceLevel)){
+        if (!user.getExperienceLevelPreference().equals(mExperienceLevelPreference)){
             return false;
         }
         if (user.getMinimumAgePreference() != mMinimumAgePreference){
