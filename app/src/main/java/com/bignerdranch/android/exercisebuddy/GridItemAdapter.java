@@ -1,6 +1,7 @@
 package com.bignerdranch.android.exercisebuddy;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,6 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -56,8 +62,20 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
         public void bind(User userMatch){
             mUsernameTextView.setText(userMatch.getName());
             if (!userMatch.getProfileImageUri().isEmpty()) {
-                Glide.with(mContext).load(userMatch.getProfileImageUri()).into(mUserImage);
+                loadProfileImage(userMatch.getUid());
             }
+        }
+
+        private void loadProfileImage(String userId){
+            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
+            Task task = filePath.getDownloadUrl();
+            task.addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    Uri imageUri = (Uri) task.getResult();
+                    Glide.with(mContext).load(imageUri).into(mUserImage);
+                }
+            });
         }
     }
 }

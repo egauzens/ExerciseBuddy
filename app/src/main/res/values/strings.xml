@@ -6,7 +6,7 @@
     <string name="password">Password</string>
     <string name="registration_error">Registration error</string>
     <string name="login_error">Login error</string>
-    <string name="name">First name</string>
+    <string name="name">Name</string>
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="anyone">Anyone</string>
@@ -47,29 +47,8 @@
     <string name="update_experience_level_preference">My experience level preference to exercise with is:</string>
     <string name="edit_preferences">Edit preferences</string>
     <string name="update_preferences">Update preferences</string>
-    <string-array name="preference_experience_array">
-        <item>Any</item>
-        <item>Beginner</item>
-        <item>Intermediate</item>
-        <item>Advanced</item>
-    </string-array>
-    <string-array name="experience_array">
-        <item>Beginner</item>
-        <item>Intermediate</item>
-        <item>Advanced</item>
-    </string-array>
-    <string name="gender_preference">I prefer to exercise with: </string>
-    <string-array name="gender_array">
-        <item>Males</item>
-        <item>Females</item>
-        <item>Anyone</item>
-    </string-array>
-    <string-array name="exercises_array">
-        <item>Hike</item>
-        <item>Bike</item>
-        <item>Run</item>
-        <item>Swim</item>
-        <item>Weight lift</item>
-        <item>Climb</item>
-    </string-array>
+    <string name="edit_profile">Edit profile</string>
+    <string name="experience_level">Experience level</string>
+    <string name="gender">Gender</string>
+    <string name="age">Age</string>
 </resources>

@@ -29,6 +29,9 @@ public class UserGridActivity extends AppCompatActivity {
 
     public void goToUserProfile(View v){
         Intent intent = new Intent(UserGridActivity.this, UserProfileActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("user", mViewModel.getCurrentUser());
+        intent.putExtras(extras);
         startActivity(intent);
         return;
     }

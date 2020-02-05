@@ -1,42 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ImageView
-        android:id="@+id/profile_view"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@mipmap/ic_launcher"
-        android:layout_margin="10dp"
-        android:layout_gravity="center"
-        android:onClick="changeProfilePicture"/>
-    <EditText
-        android:id="@+id/name"
+<layout>
+    <data>
+        <variable
+            name="viewModel"
+            type="com.bignerdranch.android.exercisebuddy.UserProfileActivityViewModel" />
+    </data>
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:hint="Name"
-        android:layout_margin="10dp"/>
-    <RadioGroup
-        android:id="@+id/gender_radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <RadioButton
+        android:layout_height="match_parent">
+        <ImageView
+            android:id="@+id/profile_image_view"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@mipmap/ic_launcher"
+            android:layout_margin="10dp"
+            android:layout_gravity="center" />
+        <TextView
+            android:id="@+id/name_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/male"/>
-        <RadioButton
+            android:background="@null"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/age_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/female"/>
-    </RadioGroup>
-    <Button
-        android:id="@+id/update_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/update"
-        android:layout_margin="10dp"
-        android:onClick="updateUserInformation"/>
-</LinearLayout>
+            android:background="@null"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/gender_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/experience_level_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_margin="10dp"/>
+        <TextView
+            android:id="@+id/description_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_margin="10dp"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/edit_profile"
+            android:layout_margin="10dp"
+            android:onClick="editProfile"/>
+    </LinearLayout>
+</layout>

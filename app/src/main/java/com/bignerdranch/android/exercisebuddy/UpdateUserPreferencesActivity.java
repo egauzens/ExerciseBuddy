@@ -10,10 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.Arrays;
 
 public class UpdateUserPreferencesActivity extends AppCompatActivity {
@@ -25,7 +21,6 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
     private NumberPicker mExperienceLevelPicker;
     private NumberPicker mMinAgePicker;
     private NumberPicker mMaxAgePicker;
-    private FirebaseAuth mAuth;
     private UpdateUserPreferencesActivityViewModel mViewModel;
 
     @Override
@@ -39,9 +34,6 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mExperienceLevelPicker = (NumberPicker) findViewById(R.id.update_experience_level_preference_picker);
         mMinAgePicker = (NumberPicker) findViewById(R.id.lower_age_preference_picker);
         mMaxAgePicker = (NumberPicker) findViewById(R.id.upper_age_preference_picker);
-
-        mAuth = FirebaseAuth.getInstance();
-        String userId = mAuth.getCurrentUser().getUid();
 
         if (mViewModel.getUser() == null){
             InitializeViewModel();

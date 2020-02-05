@@ -39,8 +39,7 @@ public class UserGridActivityViewModel extends ViewModel {
     private ChildEventListener mUsersListener;
 
     public void updateDatabase(User newUserSettings){
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
+        DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(newUserSettings.getUid());
         if (!newUserSettings.getExercise().equals(mCurrentUserSettings.getExercise()))
         {
             currentUserDatabase.child("exercise").setValue(newUserSettings.getExercise());

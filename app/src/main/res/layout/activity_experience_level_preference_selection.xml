@@ -21,7 +21,8 @@
         <NumberPicker
             android:id="@+id/experience_level_preference_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:descendantFocusability="blocksDescendants"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
