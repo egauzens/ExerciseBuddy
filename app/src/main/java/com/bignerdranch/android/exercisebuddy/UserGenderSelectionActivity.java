@@ -14,13 +14,11 @@ import java.util.Arrays;
 public class UserGenderSelectionActivity extends AppCompatActivity {
     private UserGenderSelectionActivityViewModel mViewModel;
     private NumberPicker mUserGenderPicker;
-    private String[] mGenders;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UserGenderSelectionActivityViewModel.class);
-        mGenders = getUserGenders();
         if (mViewModel.getUserGender().isEmpty()){
             initializeViewModel();
         }
@@ -31,20 +29,22 @@ public class UserGenderSelectionActivity extends AppCompatActivity {
     }
 
     private void setupUserGenderPicker(){
+        final String[] genders = getUserGenders();
         mUserGenderPicker.setMinValue(0);
-        mUserGenderPicker.setMaxValue(mGenders.length-1);
-        mUserGenderPicker.setDisplayedValues(mGenders);
-        mUserGenderPicker.setValue(Arrays.asList(mGenders).indexOf(mViewModel.getUserGender()));
+        mUserGenderPicker.setMaxValue(genders.length-1);
+        mUserGenderPicker.setDisplayedValues(genders);
+        mUserGenderPicker.setValue(Arrays.asList(genders).indexOf(mViewModel.getUserGender()));
         mUserGenderPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.setUserGender(mGenders[newVal]);
+                mViewModel.setUserGender(genders[newVal]);
             }
         });
     }
 
     private void initializeViewModel(){
-        mViewModel.setUserGender(mGenders[0]);
+        final String[] genders = getUserGenders();
+        mViewModel.setUserGender(genders[0]);
     }
 
     public void goToDateOfBirthSelection(View v){

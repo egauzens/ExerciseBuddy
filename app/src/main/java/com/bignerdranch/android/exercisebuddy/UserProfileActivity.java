@@ -1,8 +1,10 @@
 package com.bignerdranch.android.exercisebuddy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -45,6 +47,24 @@ public class UserProfileActivity extends AppCompatActivity {
         InitializeUI();
     }
 
+    public void editProfile(View v){
+        Intent intent = new Intent(UserProfileActivity.this, UpdateUserProfileActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("user", mViewModel.getUser());
+        intent.putExtras(extras);
+        startActivityForResult(intent, 3);
+        return;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 3 && resultCode == Activity.RESULT_OK){
+            setResult(resultCode, data);
+            finish();
+        }
+    }
+
     private void InitializeViewModel(){
         Intent intent = getIntent();
         User user = (User)intent.getSerializableExtra("user");
@@ -52,15 +72,18 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void InitializeUI() {
-        mNameTextView.setText(getString(R.string.name) + ": " + mViewModel.getUser().getName());
-        mAgeTextView.setText(getString(R.string.age) + ": " + mViewModel.getUser().getAge());
-        mGenderTextView.setText(getString(R.string.gender) + ": " + mViewModel.getUser().getGender());
-        mExperienceLevelTextView.setText(getString(R.string.experience_level) + ": " + mViewModel.getUser().getExperienceLevel());
-        mDescriptionTextView.setText(mViewModel.getUser().getDescription());
+        mNameTextView.setText(getString(R.string.name) + " " + mViewModel.getUser().getName());
+        mAgeTextView.setText(getString(R.string.age) + " " + mViewModel.getUser().getAge());
+        mGenderTextView.setText(getString(R.string.gender) + " " + mViewModel.getUser().getGender());
+        mExperienceLevelTextView.setText(getString(R.string.experience_level) + " " + mViewModel.getUser().getExperienceLevel());
+        mDescriptionTextView.setText(getString(R.string.bio) + " " + mViewModel.getUser().getDescription());
         loadProfileImage();
     }
 
     private void loadProfileImage(){
+        if (mViewModel.getUser().getProfileImageUri().isEmpty()) {
+            return;
+        }
         final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(mViewModel.getUser().getUid());
         Task task = filePath.getDownloadUrl();
         task.addOnCompleteListener(new OnCompleteListener() {

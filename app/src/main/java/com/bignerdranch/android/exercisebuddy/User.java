@@ -63,6 +63,34 @@ public class User implements Serializable {
         mAge = getAgeFromDob(dob);
     }
 
+    public void setDob(int year, int month, int day){
+        Calendar birthdayCalendar = Calendar.getInstance();
+        birthdayCalendar.set(year, month, day);
+        setDob(convertCalendarToString(birthdayCalendar));
+    }
+
+    private String convertCalendarToString(Calendar calendar){
+
+        return String.valueOf(calendar.get(Calendar.MONTH)) +
+                "-" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)) +
+                "-" + String.valueOf(calendar.get(Calendar.YEAR));
+    }
+
+    public int getBirthDay(){
+        String[] date = mDob.split("-");
+        return Integer.parseInt(date[1]);
+    }
+
+    public int getBirthMonth(){
+        String[] date = mDob.split("-");
+        return Integer.parseInt(date[0]);
+    }
+
+    public int getBirthYear(){
+        String[] date = mDob.split("-");
+        return Integer.parseInt(date[2]);
+    }
+
     public String getGender() {
         return mGender;
     }
@@ -222,6 +250,15 @@ public class User implements Serializable {
             return false;
         }
         if (user.getExperienceLevel() != mExperienceLevel){
+            return false;
+        }
+        if (!user.getName().equals(mName)){
+            return false;
+        }
+        if (!user.getDescription().equals(mDescription)){
+            return false;
+        }
+        if (!user.getProfileImageUri().equals(mProfileImageUri)){
             return false;
         }
 

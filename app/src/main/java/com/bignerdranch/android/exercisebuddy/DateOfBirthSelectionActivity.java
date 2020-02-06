@@ -43,6 +43,7 @@ public class DateOfBirthSelectionActivity extends AppCompatActivity {
         long currentTime = currentDate.getTime();
         long maxTime = currentTime - EIGHTEEN_YEARS_IN_MILLISECONDS;
         mDOBPicker.setMaxDate(maxTime);
+        // For older versions there is no listener implementation so we just look at what is shown on the calendar when the user clicks the continue button
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mDOBPicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
                 @Override

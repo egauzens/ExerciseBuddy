@@ -9,19 +9,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -34,134 +37,134 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UpdateUserProfileActivity extends AppCompatActivity {
-    private EditText mName;
+    private static final long EIGHTEEN_YEARS_IN_MILLISECONDS = 568024668000L;
+
     private ImageView mProfileImage;
-    private RadioGroup mGenderRadioGroup;
-    private FirebaseAuth mAuth;
-    private DatabaseReference mUserDatabase;
-    private String name, profileImageUrl, userId, gender;
-    private Uri resultUri;
+    private EditText mName;
+    private DatePicker mDOBPicker;
+    private NumberPicker mGenderPicker;
+    private NumberPicker mExperienceLevelPicker;
+    private EditText mDescription;
+    private UpdateUserProfileActivityViewModel mViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mViewModel = ViewModelProviders.of(this).get(UpdateUserProfileActivityViewModel.class);
         setContentView(R.layout.activity_update_user_profile);
 
-        mName = (EditText) findViewById(R.id.name);
-        mProfileImage = (ImageView) findViewById(R.id.profile_view);
-        mGenderRadioGroup = (RadioGroup) findViewById(R.id.gender_radio_group);
+        mProfileImage = (ImageView) findViewById(R.id.update_profile_image);
+        mName = (EditText) findViewById(R.id.update_name);
+        mDOBPicker = (DatePicker) findViewById(R.id.update_date_of_birth_picker);
+        mGenderPicker = (NumberPicker) findViewById(R.id.update_gender_picker);
+        mExperienceLevelPicker = (NumberPicker) findViewById(R.id.update_experience_level_picker);
+        mDescription = (EditText) findViewById(R.id.update_user_description);
 
-        mAuth = FirebaseAuth.getInstance();
-        userId = mAuth.getCurrentUser().getUid();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(userId);
-
-        populateUserInfo();
+        if (mViewModel.getUser() == null){
+            InitializeViewModel();
+        }
+        InitializeUI();
     }
 
-    private void populateUserInfo(){
-        mUserDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0){
-                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if (map.get("Name") != null){
-                        name = map.get("Name").toString();
-                        mName.setText(name);
-                    }
-                    if (map.get("profileImageUrl") != null){
-                        profileImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(profileImageUrl).into(mProfileImage);
-                    }
-                    if (map.get("Gender") != null){
-                        gender = map.get("Gender").toString();
-                        for (int i=0;i<mGenderRadioGroup.getChildCount();i++) {
-                            RadioButton button = (RadioButton)mGenderRadioGroup.getChildAt(i);
-                            if (button.getText().equals(gender))
-                            {
-                                mGenderRadioGroup.check(button.getId());
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
+    private void InitializeViewModel(){
+        Intent intent = getIntent();
+        User user = (User)intent.getSerializableExtra("user");
+        mViewModel.setUser(user);
+    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+    private void InitializeUI() {
+        loadProfileImage();
+        mName.setText(mViewModel.getUser().getName());
+        setupGenderPicker();
+        setupExperienceLevelPicker();
+        setupDOBPicker();
+        mDescription.setText(mViewModel.getUser().getDescription());
+    }
 
+    private void setupExperienceLevelPicker(){
+        final String[] experienceLevels = getUserExperienceLevels();
+        mExperienceLevelPicker.setMinValue(0);
+        mExperienceLevelPicker.setMaxValue(experienceLevels.length-1);
+        mExperienceLevelPicker.setDisplayedValues(experienceLevels);
+        mExperienceLevelPicker.setValue(Arrays.asList(experienceLevels).indexOf(mViewModel.getUser().getExperienceLevel()));
+        mExperienceLevelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                mViewModel.getUser().setExperienceLevel(experienceLevels[newVal]);
             }
         });
     }
 
-    public void updateUserInformation(View v){
-        name = mName.getText().toString();
-        int genderId = mGenderRadioGroup.getCheckedRadioButtonId();
-        final RadioButton genderRadioButton = (RadioButton) findViewById(genderId);
-        gender = genderRadioButton.getText().toString();
-        Map userInfo = new HashMap();
-        userInfo.put("Gender", gender);
-        userInfo.put("Name", name);
-        mUserDatabase.updateChildren(userInfo);
-        if(resultUri == null){
-            finish();
+    private void setupGenderPicker(){
+        final String[] genders = getUserGenders();
+        mGenderPicker.setMinValue(0);
+        mGenderPicker.setMaxValue(genders.length-1);
+        mGenderPicker.setDisplayedValues(genders);
+        mGenderPicker.setValue(Arrays.asList(genders).indexOf(mViewModel.getUser().getGender()));
+        mGenderPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+            @Override
+            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+                mViewModel.getUser().setGender(genders[newVal]);
+            }
+        });
+    }
+    private void loadProfileImage(){
+        if (mViewModel.getUser().getProfileImageUri().isEmpty()){
+            return;
         }
-        else{
-            Bitmap bitmap = null;
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P){
-                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), resultUri);
-                try{
-                    bitmap = ImageDecoder.decodeBitmap(source);
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                }
+        final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(mViewModel.getUser().getUid());
+        Task task = filePath.getDownloadUrl();
+        task.addOnCompleteListener(new OnCompleteListener() {
+            @Override
+            public void onComplete(@NonNull Task task) {
+                Uri imageUri = (Uri) task.getResult();
+                Glide.with(getApplication()).load(imageUri).into(mProfileImage);
             }
-            else{
-                try{
-                    bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);
-                }
-                catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
+        });
+    }
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
-            byte[] data = outputStream.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
+    private void setupDOBPicker(){
+        Date currentDate = Calendar.getInstance().getTime();
+        long currentTime = currentDate.getTime();
+        long maxTime = currentTime - EIGHTEEN_YEARS_IN_MILLISECONDS;
+        mDOBPicker.setMaxDate(maxTime);
+
+        int year = mViewModel.getUser().getBirthYear();
+        int month = mViewModel.getUser().getBirthMonth();
+        int day = mViewModel.getUser().getBirthDay();
+        mDOBPicker.updateDate(year, month, day);
+
+        // For older versions there is no listener implementation so we just look at what is shown on the calendar when the user clicks the update button
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mDOBPicker.setOnDateChangedListener(new DatePicker.OnDateChangedListener() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    finish();
-                }
-            });
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Map newImage = new HashMap();
-                            newImage.put("profileImageUrl", uri.toString());
-                            mUserDatabase.updateChildren(newImage);
-                            finish();
-                            return;
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            finish();
-                            return;
-                        }
-                    });
+                public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                    mViewModel.getUser().setDob(year, monthOfYear, dayOfMonth);
                 }
             });
         }
+    }
+
+    public void updateUserProfile(View v){
+        String name = mName.getText().toString();
+        String description = mDescription.getText().toString();
+        mViewModel.getUser().setName(name);
+        mViewModel.getUser().setDescription(description);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            mViewModel.getUser().setDob(mDOBPicker.getYear(), mDOBPicker.getMonth(), mDOBPicker.getDayOfMonth());
+        }
+
+        Intent data = new Intent();
+        data.putExtra("newUserData", mViewModel.getUser());
+        setResult(RESULT_OK, data);
+        finish();
     }
 
     public void changeProfilePicture(View v){
@@ -175,8 +178,16 @@ public class UpdateUserProfileActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == Activity.RESULT_OK){
             final Uri imageUri = data.getData();
-            resultUri = imageUri;
-            Glide.with(getApplication()).load(resultUri).into(mProfileImage);
+            mViewModel.getUser().setProfileImageUri(imageUri.toString());
+            Glide.with(getApplication()).load(imageUri).into(mProfileImage);
         }
+    }
+
+    private String[] getUserGenders(){
+        return UserSelections.UserInformation.userGenders(getApplicationContext());
+    }
+
+    public String[] getUserExperienceLevels(){
+        return UserSelections.UserInformation.getUserExperienceLevels(getApplicationContext());
     }
 }

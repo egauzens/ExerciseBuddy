@@ -24,7 +24,6 @@ public class UserGridActivity extends AppCompatActivity {
         ActivityUserGridBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_user_grid);
         binding.setLifecycleOwner(this);
         binding.setViewModel(mViewModel);
-
     }
 
     public void goToUserProfile(View v){
@@ -32,7 +31,7 @@ public class UserGridActivity extends AppCompatActivity {
         Bundle extras = new Bundle();
         extras.putSerializable("user", mViewModel.getCurrentUser());
         intent.putExtras(extras);
-        startActivity(intent);
+        startActivityForResult(intent, 3);
         return;
     }
 
@@ -52,6 +51,17 @@ public class UserGridActivity extends AppCompatActivity {
             if (data.hasExtra("newUserData")){
                 User newUserData = (User) data.getSerializableExtra("newUserData");
                 if (!mViewModel.getCurrentUser().arePreferencesEqual(newUserData)){
+                    mViewModel.updateDatabase(newUserData);
+                }
+            }
+        }
+        if (requestCode == 3 && resultCode == Activity.RESULT_OK){
+            if (data.hasExtra("newUserData")){
+                User newUserData = (User) data.getSerializableExtra("newUserData");
+                if (!mViewModel.getCurrentUser().areProfilesEqual(newUserData)){
+                    if (!mViewModel.getCurrentUser().getProfileImageUri().equals(newUserData.getProfileImageUri())){
+                        mViewModel.loadProfileImageIntoStorage(newUserData, this.getContentResolver());
+                    }
                     mViewModel.updateDatabase(newUserData);
                 }
             }

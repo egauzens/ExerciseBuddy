@@ -1,6 +1,11 @@
 package com.bignerdranch.android.exercisebuddy;
 
-import android.renderscript.Sampler;
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +21,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class UserGridActivityViewModel extends ViewModel {
     public final ObservableArrayList<User> mUserMatches;
@@ -59,6 +70,63 @@ public class UserGridActivityViewModel extends ViewModel {
         if(newUserSettings.getMinimumAgePreference() != mCurrentUserSettings.getMinimumAgePreference())
         {
             currentUserDatabase.child("lowerAgePreference").setValue(newUserSettings.getMinimumAgePreference());
+        }
+        if(newUserSettings.getProfileImageUri() != mCurrentUserSettings.getProfileImageUri())
+        {
+            currentUserDatabase.child("profileImageUri").setValue(newUserSettings.getProfileImageUri());
+        }
+        if(newUserSettings.getDob() != mCurrentUserSettings.getDob())
+        {
+            currentUserDatabase.child("dateOfBirth").setValue(newUserSettings.getDob());
+        }
+        if(newUserSettings.getGender() != mCurrentUserSettings.getGender())
+        {
+            currentUserDatabase.child("userGender").setValue(newUserSettings.getGender());
+        }
+        if(newUserSettings.getDescription() != mCurrentUserSettings.getDescription())
+        {
+            currentUserDatabase.child("userDescription").setValue(newUserSettings.getDescription());
+        }
+        if(newUserSettings.getExperienceLevel() != mCurrentUserSettings.getExperienceLevel())
+        {
+            currentUserDatabase.child("userExperienceLevel").setValue(newUserSettings.getExperienceLevel());
+        }
+        if(newUserSettings.getName() != mCurrentUserSettings.getName())
+        {
+            currentUserDatabase.child("name").setValue(newUserSettings.getName());
+        }
+    }
+
+    public boolean loadProfileImageIntoStorage(User user, ContentResolver resolver){
+        String imageUrl = user.getProfileImageUri();
+        if (imageUrl.isEmpty()) {
+            return false;
+        }
+        else {
+            Uri imageUri = Uri.parse(imageUrl);
+            Bitmap bitmap = null;
+            String userId = user.getUid();
+            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                ImageDecoder.Source source = ImageDecoder.createSource(resolver, imageUri);
+                try {
+                    bitmap = ImageDecoder.decodeBitmap(source);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(resolver, imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
+            byte[] data = outputStream.toByteArray();
+            UploadTask uploadTask = filePath.putBytes(data);
+            return uploadTask.isSuccessful();
         }
     }
 

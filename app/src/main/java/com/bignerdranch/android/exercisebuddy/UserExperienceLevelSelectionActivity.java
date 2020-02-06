@@ -27,14 +27,14 @@ public class UserExperienceLevelSelectionActivity extends AppCompatActivity {
         }
 
         mUserExperienceLevelPicker = (NumberPicker) findViewById(R.id.user_experience_level_picker);
-        setupUserGenderPicker();
+        setupUserExperienceLevelPicker();
     }
 
     private void initializeViewModel(){
         mViewModel.setUserExperienceLevel(mUserExperienceLevels[0]);
     }
 
-    private void setupUserGenderPicker(){
+    private void setupUserExperienceLevelPicker(){
         mUserExperienceLevelPicker.setMinValue(0);
         mUserExperienceLevelPicker.setMaxValue(mUserExperienceLevels.length-1);
         mUserExperienceLevelPicker.setDisplayedValues(mUserExperienceLevels);
