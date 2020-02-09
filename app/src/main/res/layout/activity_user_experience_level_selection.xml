@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.bignerdranch.android.exercisebuddy.UserExperienceLevelSelectionActivityViewModel" />
+            type="com.bignerdranch.android.exercisebuddy.viewmodels.UserExperienceLevelSelectionActivityViewModel" />
     </data>
     <LinearLayout
         android:layout_width="match_parent"

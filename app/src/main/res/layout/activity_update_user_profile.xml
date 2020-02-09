@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.bignerdranch.android.exercisebuddy.UpdateUserProfileActivityViewModel" />
+            type="com.bignerdranch.android.exercisebuddy.viewmodels.UpdateUserProfileActivityViewModel" />
     </data>
     <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -113,8 +113,8 @@
                     android:layout_marginEnd="10dp"
                     android:text="@string/bio"
                     android:layout_gravity="center_vertical"/>
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_height="75dp"
+                <LinearLayout
+                    android:layout_height="110dp"
                     android:layout_width="0dp"
                     android:layout_column="1"
                     android:layout_row="4"
@@ -128,7 +128,7 @@
                         android:scrollbars="vertical"
                         android:hint="@string/description_hint"
                         />
-                </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
             </GridLayout>
             <Button
                 android:id="@+id/update_button"

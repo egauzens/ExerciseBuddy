@@ -3,6 +3,9 @@ package com.bignerdranch.android.exercisebuddy;
 import androidx.databinding.BindingAdapter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bignerdranch.android.exercisebuddy.models.User;
+
 import java.util.List;
 
 public class CustomViewBindings {

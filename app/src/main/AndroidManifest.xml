@@ -11,27 +11,27 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginOrRegisterActivity">
+        <activity android:name=".views.LoginOrRegisterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ProfileImageActivity"/>
-        <activity android:name=".ExerciseSelectionActivity"/>
-        <activity android:name=".UserGenderSelectionActivity"/>
-        <activity android:name=".DateOfBirthSelectionActivity"/>
-        <activity android:name=".UserExperienceLevelSelectionActivity"/>
-        <activity android:name=".GenderPreferenceSelectionActivity"/>
-        <activity android:name=".AgeRangePreferenceSelectionActivity"/>
-        <activity android:name=".ExperienceLevelPreferenceSelectionActivity"/>
-        <activity android:name=".LoginActivity"/>
-        <activity android:name=".RegisterActivity"/>
-        <activity android:name=".UserGridActivity"/>
-        <activity android:name=".UserProfileActivity"/>
-        <activity android:name=".UpdateUserPreferencesActivity"/>
-        <activity android:name=".UpdateUserProfileActivity"/>
+        <activity android:name=".views.ProfileImageActivity"/>
+        <activity android:name=".views.ExerciseSelectionActivity"/>
+        <activity android:name=".views.UserGenderSelectionActivity"/>
+        <activity android:name=".views.DateOfBirthSelectionActivity"/>
+        <activity android:name=".views.UserExperienceLevelSelectionActivity"/>
+        <activity android:name=".views.GenderPreferenceSelectionActivity"/>
+        <activity android:name=".views.AgeRangePreferenceSelectionActivity"/>
+        <activity android:name=".views.ExperienceLevelPreferenceSelectionActivity"/>
+        <activity android:name=".views.LoginActivity"/>
+        <activity android:name=".views.RegisterActivity"/>
+        <activity android:name=".views.UserGridActivity"/>
+        <activity android:name=".views.UserProfileActivity"/>
+        <activity android:name=".views.UpdateUserPreferencesActivity"/>
+        <activity android:name=".views.UpdateUserProfileActivity"/>
     </application>
 
 </manifest>
