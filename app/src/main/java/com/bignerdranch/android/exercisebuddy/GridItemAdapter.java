@@ -3,6 +3,7 @@ package com.bignerdranch.android.exercisebuddy;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,11 +23,11 @@ import java.util.List;
 public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridItemHolder> {
 
     private List<User> mUserMatches;
-    private Context mContext;
+    private GridItemClickListener mGridItemClickListener;
 
-    public GridItemAdapter(Context context, List<User> userMatches){
-        mContext = context;
+    public GridItemAdapter(List<User> userMatches, GridItemClickListener listener){
         mUserMatches = userMatches;
+        mGridItemClickListener = listener;
     }
 
     @NonNull
@@ -40,7 +41,7 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
     @Override
     public void onBindViewHolder(@NonNull GridItemHolder holder, int position) {
         User userMatch = mUserMatches.get(position);
-        holder.bind(userMatch);
+        holder.bind(userMatch, mGridItemClickListener);
     }
 
     @Override
@@ -51,16 +52,24 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
     class GridItemHolder extends RecyclerView.ViewHolder{
         private TextView mUsernameTextView;
         private ImageView mUserImage;
+        private Context mContext;
 
         public GridItemHolder(LayoutInflater inflater, ViewGroup parent){
             super(inflater.inflate(R.layout.grid_item_user, parent, false));
 
+            mContext = parent.getContext();
             mUsernameTextView = (TextView) itemView.findViewById(R.id.username);
             mUserImage = (ImageView) itemView.findViewById(R.id.user_image);
         }
 
-        public void bind(User userMatch){
+        public void bind(final User userMatch, final GridItemClickListener listener){
             mUsernameTextView.setText(userMatch.getName());
+            mUserImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onGridItemClicked(userMatch);
+                }
+            });
             if (!userMatch.getProfileImageUri().isEmpty()) {
                 loadProfileImage(userMatch.getUid());
             }

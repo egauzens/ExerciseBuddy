@@ -5,17 +5,17 @@ import androidx.lifecycle.ViewModel;
 import com.bignerdranch.android.exercisebuddy.models.User;
 
 public class UserProfileActivityViewModel extends ViewModel {
-    private User mUser;
+    private User mUserProfile;
 
     public UserProfileActivityViewModel(){
-        mUser = null;
+        mUserProfile = null;
     }
 
-    public User getUser() {
-        return mUser;
+    public User getUserProfile() {
+        return mUserProfile;
     }
 
-    public void setUser(User user) {
-        this.mUser = user;
+    public void setUserProfile(User user) {
+        this.mUserProfile = user;
     }
 }

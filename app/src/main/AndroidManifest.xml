@@ -32,6 +32,7 @@
         <activity android:name=".views.UserProfileActivity"/>
         <activity android:name=".views.UpdateUserPreferencesActivity"/>
         <activity android:name=".views.UpdateUserProfileActivity"/>
+        <activity android:name=".views.MatchProfileActivity"/>
     </application>
 
 </manifest>

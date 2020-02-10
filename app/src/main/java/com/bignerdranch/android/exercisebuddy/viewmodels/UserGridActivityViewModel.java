@@ -161,11 +161,11 @@ public class UserGridActivityViewModel extends ViewModel {
     }
 
     private void resetMatches(){
-        if (mUsersDBQuery != null && mUsersListener != null){
-            mUsersDBQuery.removeEventListener(mUsersListener);
-        }
         if (!mUserMatches.isEmpty()){
             mUserMatches.clear();
+        }
+        if (mUsersDBQuery != null && mUsersListener != null){
+            mUsersDBQuery.removeEventListener(mUsersListener);
         }
     }
 
@@ -193,10 +193,12 @@ public class UserGridActivityViewModel extends ViewModel {
                         for (User user : mUserMatches) {
                             if (user.getUid().equals(changedUser.getUid())){
                                 if (!mCurrentUserSettings.doesMatchWith(changedUser) || !changedUser.doesMatchWith(mCurrentUserSettings))
-                                mUserMatches.remove(user);
+                                    mUserMatches.remove(user);
                                 return;
                             }
                         }
+                        if (mCurrentUserSettings.doesMatchWith(changedUser) && changedUser.doesMatchWith(mCurrentUserSettings))
+                            mUserMatches.add(changedUser);
                     }
                     else {
                         resetMatches();
