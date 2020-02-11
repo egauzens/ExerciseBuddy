@@ -79,7 +79,7 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
     }
 
     private void setupRecyclerView(){
-        mGridItemsRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mGridItemsRecyclerView = (RecyclerView) findViewById(R.id.matches_recycler_view);
         mGridItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mGridItemsRecyclerView.setAdapter(mGridItemAdapter);
     }
