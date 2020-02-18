@@ -1,6 +1,7 @@
 package com.bignerdranch.android.exercisebuddy.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class User implements Serializable {
@@ -18,6 +19,7 @@ public class User implements Serializable {
     private int mDistancePreference;
     private int mAge;
     private String mUid;
+    private ArrayList<String> mConversationIds;
 
     public User(String name,
                 String gender,
@@ -44,6 +46,22 @@ public class User implements Serializable {
         mExperienceLevelPreference = experienceLevelPreference;
         mUid = uid;
         mAge = getAgeFromDob(dob);
+        mConversationIds = new ArrayList<>();
+    }
+
+    public void addConversationId(String conversationId){
+        if (mConversationIds.contains(conversationId)){
+            return;
+        }
+        mConversationIds.add(conversationId);
+    }
+
+    public void removeConversationId(String conversationId){
+        mConversationIds.remove(conversationId);
+    }
+
+    public ArrayList<String> getConversationIds(){
+        return mConversationIds;
     }
 
     public String getName() {

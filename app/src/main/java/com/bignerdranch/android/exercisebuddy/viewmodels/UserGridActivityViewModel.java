@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
+import com.bignerdranch.android.exercisebuddy.models.Message;
 import com.bignerdranch.android.exercisebuddy.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,68 +32,67 @@ import java.io.IOException;
 
 public class UserGridActivityViewModel extends ViewModel {
     public final ObservableArrayList<User> mUserMatches;
-    private User mCurrentUserSettings;
+    private User mCurrentUser;
     private Query mUsersDBQuery;
+    private ChildEventListener mUsersListener;
 
     public UserGridActivityViewModel(){
         mUserMatches = new ObservableArrayList<>();
 
-        updateUserSettings();
+        addListenerForUserSettings();
     }
 
     public User getCurrentUser() {
-        return mCurrentUserSettings;
+        return mCurrentUser;
     }
 
     public ObservableArrayList<User> getUserMatches() {
         return mUserMatches;
     }
 
-    private ChildEventListener mUsersListener;
-
     public void updateDatabase(User newUserSettings){
         DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(newUserSettings.getUid());
-        if (!newUserSettings.getExercise().equals(mCurrentUserSettings.getExercise()))
+        if (!newUserSettings.getExercise().equals(mCurrentUser.getExercise()))
         {
             currentUserDatabase.child("exercise").setValue(newUserSettings.getExercise());
         }
-        if (!newUserSettings.getGenderPreference().equals(mCurrentUserSettings.getGenderPreference()))
+        if (!newUserSettings.getGenderPreference().equals(mCurrentUser.getGenderPreference()))
         {
             currentUserDatabase.child("genderPreference").setValue(newUserSettings.getGenderPreference());
         }
-        if(!newUserSettings.getExperienceLevelPreference().equals(mCurrentUserSettings.getExperienceLevelPreference()))
+        if(!newUserSettings.getExperienceLevelPreference().equals(mCurrentUser.getExperienceLevelPreference()))
         {
             currentUserDatabase.child("experienceLevelPreference").setValue(newUserSettings.getExperienceLevelPreference());
         }
-        if(newUserSettings.getMaximumAgePreference() != mCurrentUserSettings.getMaximumAgePreference())
+        if(newUserSettings.getMaximumAgePreference() != mCurrentUser.getMaximumAgePreference())
         {
             currentUserDatabase.child("upperAgePreference").setValue(newUserSettings.getMaximumAgePreference());
         }
-        if(newUserSettings.getMinimumAgePreference() != mCurrentUserSettings.getMinimumAgePreference())
+        if(newUserSettings.getMinimumAgePreference() != mCurrentUser.getMinimumAgePreference())
         {
             currentUserDatabase.child("lowerAgePreference").setValue(newUserSettings.getMinimumAgePreference());
         }
-        if(newUserSettings.getProfileImageUri() != mCurrentUserSettings.getProfileImageUri())
+        if(newUserSettings.getProfileImageUri() != mCurrentUser.getProfileImageUri())
         {
             currentUserDatabase.child("profileImageUri").setValue(newUserSettings.getProfileImageUri());
         }
-        if(newUserSettings.getDob() != mCurrentUserSettings.getDob())
+        if(newUserSettings.getDob() != mCurrentUser.getDob())
         {
             currentUserDatabase.child("dateOfBirth").setValue(newUserSettings.getDob());
         }
-        if(newUserSettings.getGender() != mCurrentUserSettings.getGender())
+        if(newUserSettings.getGender() != mCurrentUser.getGender())
         {
             currentUserDatabase.child("userGender").setValue(newUserSettings.getGender());
         }
-        if(newUserSettings.getDescription() != mCurrentUserSettings.getDescription())
+        if(newUserSettings.getDescription() != mCurrentUser.getDescription())
         {
             currentUserDatabase.child("userDescription").setValue(newUserSettings.getDescription());
         }
-        if(newUserSettings.getExperienceLevel() != mCurrentUserSettings.getExperienceLevel())
+        if(newUserSettings.getExperienceLevel() != mCurrentUser.getExperienceLevel())
         {
             currentUserDatabase.child("userExperienceLevel").setValue(newUserSettings.getExperienceLevel());
         }
-        if(newUserSettings.getName() != mCurrentUserSettings.getName())
+        if(newUserSettings.getName() != mCurrentUser.getName())
         {
             currentUserDatabase.child("name").setValue(newUserSettings.getName());
         }
@@ -131,7 +131,7 @@ public class UserGridActivityViewModel extends ViewModel {
         }
     }
 
-    private void updateUserSettings(){
+    private void addListenerForUserSettings(){
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
 
@@ -139,9 +139,13 @@ public class UserGridActivityViewModel extends ViewModel {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
-                    User oldUserSettings = mCurrentUserSettings;
-                    mCurrentUserSettings = createUser(dataSnapshot);
-                    if (oldUserSettings == null || !oldUserSettings.getExercise().equals(mCurrentUserSettings.getExercise())) {
+                    User oldUser = mCurrentUser;
+                    mCurrentUser = createUser(dataSnapshot);
+                    if (oldUser == null || !oldUser.getExercise().equals(mCurrentUser.getExercise())) {
+                        if (oldUser == null){
+                            // we know that this is the first time the user info is being retrieved
+                            addListenerForUserConversations();
+                        }
                         updateQuery();
                     }
                 }
@@ -152,11 +156,107 @@ public class UserGridActivityViewModel extends ViewModel {
 
             }
         });
+
+    }
+
+    private void addListenerForUserConversations(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference conversationIdsDb = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("conversationIds");
+        conversationIdsDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    // set a dummy value in case the user has no conversations yet (Firebase does not allow empty directories)
+                    conversationIdsDb.setValue(true);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        conversationIdsDb.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                mCurrentUser.addConversationId(dataSnapshot.getKey());
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /*private void populateUserWithConversations(User user, DataSnapshot dataSnapshot){
+        for (DataSnapshot child : dataSnapshot.getChildren())
+        {
+            final String conversationId = child.getKey();
+            DatabaseReference conversationDb = FirebaseDatabase.getInstance().getReference().child("conversations");
+            conversationDb.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    String conversationId = dataSnapshot.getKey();
+                    for (DataSnapshot child : dataSnapshot.getChildren()){
+                        Message firstMessage = createMessage(child);
+                        Conversation conversation = new Conversation(firstMessage, conversationId);
+                        mCurrentUser.addConversation(conversation);
+                        break;
+                    }
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }*/
+
+    private Message createMessage(DataSnapshot dataSnapshot){
+        String messageId = dataSnapshot.getKey();
+        String senderUserId = dataSnapshot.child("senderUserId").getValue(String.class);
+        String receiverUserId = dataSnapshot.child("receiverUserId").getValue(String.class);
+        String content = dataSnapshot.child("content").getValue(String.class);
+        long time = (long)dataSnapshot.child("time").getValue(Long.class);
+
+        return new Message(content, senderUserId, receiverUserId, time, messageId);
     }
 
     private void updateQuery(){
         resetMatches();
-        mUsersDBQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("exercise").equalTo(mCurrentUserSettings.getExercise());
+        mUsersDBQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("exercise").equalTo(mCurrentUser.getExercise());
         updateDisplayedUsers();
     }
 
@@ -177,7 +277,7 @@ public class UserGridActivityViewModel extends ViewModel {
                 if (dataSnapshot.exists()) {
                     if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
                         User addedUser = createUser(dataSnapshot);
-                        if (mCurrentUserSettings.doesMatchWith(addedUser) && addedUser.doesMatchWith(mCurrentUserSettings)){
+                        if (mCurrentUser.doesMatchWith(addedUser) && addedUser.doesMatchWith(mCurrentUser)){
                             mUserMatches.add(addedUser);
                         }
                     }
@@ -192,12 +292,12 @@ public class UserGridActivityViewModel extends ViewModel {
                         User changedUser = createUser(dataSnapshot);
                         for (User user : mUserMatches) {
                             if (user.getUid().equals(changedUser.getUid())){
-                                if (!mCurrentUserSettings.doesMatchWith(changedUser) || !changedUser.doesMatchWith(mCurrentUserSettings))
+                                if (!mCurrentUser.doesMatchWith(changedUser) || !changedUser.doesMatchWith(mCurrentUser))
                                     mUserMatches.remove(user);
                                 return;
                             }
                         }
-                        if (mCurrentUserSettings.doesMatchWith(changedUser) && changedUser.doesMatchWith(mCurrentUserSettings))
+                        if (mCurrentUser.doesMatchWith(changedUser) && changedUser.doesMatchWith(mCurrentUser))
                             mUserMatches.add(changedUser);
                     }
                     else {
@@ -250,7 +350,7 @@ public class UserGridActivityViewModel extends ViewModel {
         int lowerAgePreference = Integer.parseInt(dataSnapshot.child("lowerAgePreference").getValue().toString());
         int upperAgePreference = Integer.parseInt(dataSnapshot.child("upperAgePreference").getValue().toString());
         String experienceLevelPreference = dataSnapshot.child("experienceLevelPreference").getValue().toString();
-        return new User(userName,
+        User user = new User(userName,
                 userGender,
                 userDob,
                 userExperienceLevel,
@@ -262,5 +362,11 @@ public class UserGridActivityViewModel extends ViewModel {
                 upperAgePreference,
                 experienceLevelPreference,
                 dataSnapshot.getKey());
+
+        for (DataSnapshot child : dataSnapshot.child("conversationIds").getChildren()){
+            user.addConversationId(child.getKey());
+        }
+
+        return user;
     }
 }

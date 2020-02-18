@@ -17,8 +17,9 @@ public class UserProfileActivity extends ProfileActivity {
         return ViewModelProviders.of(this).get(UserProfileActivityViewModel.class);
     }
 
-    public int getLayoutId(){
-        return R.layout.activity_user_profile;
+    @Override
+    public void setContentView(){
+        setContentView(R.layout.activity_user_profile);
     }
 
     public void editProfile(View v){

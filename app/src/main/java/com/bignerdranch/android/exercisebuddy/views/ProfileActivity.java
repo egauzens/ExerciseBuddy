@@ -32,7 +32,7 @@ public abstract class ProfileActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = getViewModel();
-        setContentView(getLayoutId());
+        setContentView();
 
         mNameTextView = (TextView) findViewById(R.id.name_text_view);
         mAgeTextView = (TextView) findViewById(R.id.age_text_view);
@@ -49,7 +49,7 @@ public abstract class ProfileActivity extends AppCompatActivity {
 
     public abstract UserProfileActivityViewModel getViewModel();
 
-    public abstract int getLayoutId();
+    public abstract void setContentView();
 
     protected void InitializeViewModel(){
         Intent intent = getIntent();

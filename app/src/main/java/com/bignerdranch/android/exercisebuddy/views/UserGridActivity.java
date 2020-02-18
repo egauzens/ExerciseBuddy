@@ -85,10 +85,14 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
     }
 
     public void onGridItemClicked(User gridItem){
+        User currentUser = mViewModel.getCurrentUser();
         Intent intent = new Intent(UserGridActivity.this, MatchProfileActivity.class);
         Bundle extras = new Bundle();
+        // set the user to the gridItem (which is the match) because the actual profile we are viewing is that of the match.
+        // the current logged in user is now considered the match.
         extras.putSerializable("user", gridItem);
-        extras.putSerializable("match", mViewModel.getCurrentUser());
+        extras.putSerializable("match", currentUser);
+
         intent.putExtras(extras);
         startActivity(intent);
         return;

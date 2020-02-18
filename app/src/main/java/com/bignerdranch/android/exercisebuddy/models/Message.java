@@ -1,47 +1,37 @@
 package com.bignerdranch.android.exercisebuddy.models;
 
-public class Message {
-    private long mDate;
+import java.io.Serializable;
+
+public class Message implements Serializable {
+    private long mTime;
     private String mText;
     private String mSenderId;
+    private String mReceiverId;
     private String mMessageId;
 
-    public Message(String text, String senderId, long date, String messageId){
+    public Message(String text, String senderId, String receiverId, long time, String messageId){
         mText = text;
         mSenderId = senderId;
-        mDate = date;
+        mReceiverId = receiverId;
+        mTime = time;
         mMessageId = messageId;
     }
 
-    public long getDate() {
-        return mDate;
-    }
-
-    public void setDate(long date) {
-        this.mDate = date;
+    public long getTime() {
+        return mTime;
     }
 
     public String getText() {
         return mText;
     }
 
-    public void setText(String text) {
-        this.mText = text;
-    }
-
     public String getSenderId() {
         return mSenderId;
     }
 
-    public void setSenderId(String senderId) {
-        this.mSenderId = senderId;
-    }
+    public String getReceiverId() { return mReceiverId; }
 
     public String getMessageId() {
         return mMessageId;
-    }
-
-    public void setMessageId(String messageId) {
-        this.mMessageId = messageId;
     }
 }

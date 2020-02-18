@@ -33,6 +33,7 @@
         <activity android:name=".views.UpdateUserPreferencesActivity"/>
         <activity android:name=".views.UpdateUserProfileActivity"/>
         <activity android:name=".views.MatchProfileActivity"/>
+        <activity android:name=".views.MessagingActivity"/>
     </application>
 
 </manifest>
