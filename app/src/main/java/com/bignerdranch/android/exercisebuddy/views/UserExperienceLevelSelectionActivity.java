@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserExperienceLevelSelectionActivityViewModel;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -62,6 +62,6 @@ public class UserExperienceLevelSelectionActivity extends AppCompatActivity {
     }
 
     public String[] getUserExperienceLevels(){
-        return UserSelections.UserInformation.getUserExperienceLevels(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.getUserExperienceLevels(getApplicationContext());
     }
 }

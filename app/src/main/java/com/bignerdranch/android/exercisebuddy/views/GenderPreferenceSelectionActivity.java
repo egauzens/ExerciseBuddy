@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.viewmodels.GenderPreferenceSelectionActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -63,6 +63,6 @@ public class GenderPreferenceSelectionActivity extends AppCompatActivity {
     }
 
     public String[] getGenderPreferences(){
-        return UserSelections.UserPreferences.genderPreferences(getApplicationContext());
+        return UserSelectionsHelpers.UserPreferences.genderPreferences(getApplicationContext());
     }
 }

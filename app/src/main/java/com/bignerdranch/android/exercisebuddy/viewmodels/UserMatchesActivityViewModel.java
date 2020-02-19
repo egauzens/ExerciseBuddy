@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
-import com.bignerdranch.android.exercisebuddy.models.Message;
 import com.bignerdranch.android.exercisebuddy.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,13 +29,13 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class UserGridActivityViewModel extends ViewModel {
+public class UserMatchesActivityViewModel extends ViewModel {
     public final ObservableArrayList<User> mUserMatches;
     private User mCurrentUser;
     private Query mUsersDBQuery;
     private ChildEventListener mUsersListener;
 
-    public UserGridActivityViewModel(){
+    public UserMatchesActivityViewModel(){
         mUserMatches = new ObservableArrayList<>();
 
         addListenerForUserSettings();
@@ -72,27 +71,27 @@ public class UserGridActivityViewModel extends ViewModel {
         {
             currentUserDatabase.child("lowerAgePreference").setValue(newUserSettings.getMinimumAgePreference());
         }
-        if(newUserSettings.getProfileImageUri() != mCurrentUser.getProfileImageUri())
+        if(!newUserSettings.getProfileImageUri().equals(mCurrentUser.getProfileImageUri()))
         {
             currentUserDatabase.child("profileImageUri").setValue(newUserSettings.getProfileImageUri());
         }
-        if(newUserSettings.getDob() != mCurrentUser.getDob())
+        if(!newUserSettings.getDob().equals(mCurrentUser.getDob()))
         {
             currentUserDatabase.child("dateOfBirth").setValue(newUserSettings.getDob());
         }
-        if(newUserSettings.getGender() != mCurrentUser.getGender())
+        if(!newUserSettings.getGender().equals(mCurrentUser.getGender()))
         {
             currentUserDatabase.child("userGender").setValue(newUserSettings.getGender());
         }
-        if(newUserSettings.getDescription() != mCurrentUser.getDescription())
+        if(!newUserSettings.getDescription().equals(mCurrentUser.getDescription()))
         {
             currentUserDatabase.child("userDescription").setValue(newUserSettings.getDescription());
         }
-        if(newUserSettings.getExperienceLevel() != mCurrentUser.getExperienceLevel())
+        if(!newUserSettings.getExperienceLevel().equals(mCurrentUser.getExperienceLevel()))
         {
             currentUserDatabase.child("userExperienceLevel").setValue(newUserSettings.getExperienceLevel());
         }
-        if(newUserSettings.getName() != mCurrentUser.getName())
+        if(!newUserSettings.getName().equals(mCurrentUser.getName()))
         {
             currentUserDatabase.child("name").setValue(newUserSettings.getName());
         }
@@ -202,56 +201,6 @@ public class UserGridActivityViewModel extends ViewModel {
 
             }
         });
-    }
-
-    /*private void populateUserWithConversations(User user, DataSnapshot dataSnapshot){
-        for (DataSnapshot child : dataSnapshot.getChildren())
-        {
-            final String conversationId = child.getKey();
-            DatabaseReference conversationDb = FirebaseDatabase.getInstance().getReference().child("conversations");
-            conversationDb.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                    String conversationId = dataSnapshot.getKey();
-                    for (DataSnapshot child : dataSnapshot.getChildren()){
-                        Message firstMessage = createMessage(child);
-                        Conversation conversation = new Conversation(firstMessage, conversationId);
-                        mCurrentUser.addConversation(conversation);
-                        break;
-                    }
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-    }*/
-
-    private Message createMessage(DataSnapshot dataSnapshot){
-        String messageId = dataSnapshot.getKey();
-        String senderUserId = dataSnapshot.child("senderUserId").getValue(String.class);
-        String receiverUserId = dataSnapshot.child("receiverUserId").getValue(String.class);
-        String content = dataSnapshot.child("content").getValue(String.class);
-        long time = (long)dataSnapshot.child("time").getValue(Long.class);
-
-        return new Message(content, senderUserId, receiverUserId, time, messageId);
     }
 
     private void updateQuery(){

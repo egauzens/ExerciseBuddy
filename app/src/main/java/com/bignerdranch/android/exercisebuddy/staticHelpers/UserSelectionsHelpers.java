@@ -1,8 +1,10 @@
-package com.bignerdranch.android.exercisebuddy;
+package com.bignerdranch.android.exercisebuddy.staticHelpers;
 
 import android.content.Context;
 
-public class UserSelections {
+import com.bignerdranch.android.exercisebuddy.R;
+
+public class UserSelectionsHelpers {
     public static class UserInformation{
         public static String[] exercises(Context context){
             return new String[] {context.getString(R.string.biking),

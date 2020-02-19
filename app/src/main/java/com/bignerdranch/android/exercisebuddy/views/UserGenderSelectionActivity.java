@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserGenderSelectionActivityViewModel;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -62,6 +62,6 @@ public class UserGenderSelectionActivity extends AppCompatActivity {
     }
 
     private String[] getUserGenders(){
-        return UserSelections.UserInformation.userGenders(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.userGenders(getApplicationContext());
     }
 }

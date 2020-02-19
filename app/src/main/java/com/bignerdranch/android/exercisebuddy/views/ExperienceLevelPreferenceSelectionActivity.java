@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.viewmodels.ExperienceLevelPreferenceSelectionActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -63,6 +63,6 @@ public class ExperienceLevelPreferenceSelectionActivity extends AppCompatActivit
     }
 
     public String[] getExperienceLevelPreferences(){
-        return UserSelections.UserPreferences.getExperienceLevelPreferences(getApplicationContext());
+        return UserSelectionsHelpers.UserPreferences.getExperienceLevelPreferences(getApplicationContext());
     }
 }

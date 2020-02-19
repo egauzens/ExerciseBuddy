@@ -1,4 +1,4 @@
-package com.bignerdranch.android.exercisebuddy;
+package com.bignerdranch.android.exercisebuddy.adapters;
 
 import android.view.View;
 

@@ -15,6 +15,8 @@ import com.bignerdranch.android.exercisebuddy.models.User;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -67,16 +69,16 @@ public abstract class ProfileActivity extends AppCompatActivity {
     }
 
     private void loadProfileImage(){
-        if (mViewModel.getUserProfile().getProfileImageUri().isEmpty()) {
-            return;
-        }
         final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(mViewModel.getUserProfile().getUid());
-        Task task = filePath.getDownloadUrl();
-        task.addOnCompleteListener(new OnCompleteListener() {
+        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
-            public void onComplete(@NonNull Task task) {
-                Uri imageUri = (Uri) task.getResult();
-                Glide.with(getApplication()).load(imageUri).into(mProfileImageView);
+            public void onSuccess(Uri uri) {
+                Glide.with(getApplication()).load(uri).into(mProfileImageView);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                return;
             }
         });
     }

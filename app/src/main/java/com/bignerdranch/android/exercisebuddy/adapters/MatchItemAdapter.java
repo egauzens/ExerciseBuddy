@@ -1,4 +1,4 @@
-package com.bignerdranch.android.exercisebuddy;
+package com.bignerdranch.android.exercisebuddy.adapters;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,37 +11,41 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bignerdranch.android.exercisebuddy.interfaces.IMatchItemClickListener;
+import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.models.User;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
-public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridItemHolder> {
+public class MatchItemAdapter extends RecyclerView.Adapter<MatchItemAdapter.MatchItemHolder> {
 
     private List<User> mUserMatches;
-    private GridItemClickListener mGridItemClickListener;
+    private IMatchItemClickListener mMatchItemClickListener;
 
-    public GridItemAdapter(List<User> userMatches, GridItemClickListener listener){
+    public MatchItemAdapter(List<User> userMatches, IMatchItemClickListener listener){
         mUserMatches = userMatches;
-        mGridItemClickListener = listener;
+        mMatchItemClickListener = listener;
     }
 
     @NonNull
     @Override
-    public GridItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MatchItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
-        return new GridItemHolder(layoutInflater, parent);
+        return new MatchItemHolder(layoutInflater, parent);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GridItemHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MatchItemHolder holder, int position) {
         User userMatch = mUserMatches.get(position);
-        holder.bind(userMatch, mGridItemClickListener);
+        holder.bind(userMatch, mMatchItemClickListener);
     }
 
     @Override
@@ -49,40 +53,41 @@ public class GridItemAdapter extends RecyclerView.Adapter<GridItemAdapter.GridIt
         return mUserMatches.size();
     }
 
-    class GridItemHolder extends RecyclerView.ViewHolder{
+    class MatchItemHolder extends RecyclerView.ViewHolder{
         private TextView mUsernameTextView;
         private ImageView mUserImage;
         private Context mContext;
 
-        public GridItemHolder(LayoutInflater inflater, ViewGroup parent){
-            super(inflater.inflate(R.layout.grid_item_user, parent, false));
+        public MatchItemHolder(LayoutInflater inflater, ViewGroup parent){
+            super(inflater.inflate(R.layout.item_match, parent, false));
 
             mContext = parent.getContext();
             mUsernameTextView = (TextView) itemView.findViewById(R.id.username);
             mUserImage = (ImageView) itemView.findViewById(R.id.user_image);
         }
 
-        public void bind(final User userMatch, final GridItemClickListener listener){
+        public void bind(final User userMatch, final IMatchItemClickListener listener){
             mUsernameTextView.setText(userMatch.getName());
             mUserImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onGridItemClicked(userMatch);
+                    listener.onMatchItemClicked(userMatch);
                 }
             });
-            if (!userMatch.getProfileImageUri().isEmpty()) {
-                loadProfileImage(userMatch.getUid());
-            }
+            loadProfileImage(userMatch.getUid());
         }
 
         private void loadProfileImage(String userId){
             final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            Task task = filePath.getDownloadUrl();
-            task.addOnCompleteListener(new OnCompleteListener() {
+            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                 @Override
-                public void onComplete(@NonNull Task task) {
-                    Uri imageUri = (Uri) task.getResult();
-                    Glide.with(mContext).load(imageUri).into(mUserImage);
+                public void onSuccess(Uri uri) {
+                    Glide.with(mContext).load(uri).into(mUserImage);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    return;
                 }
             });
         }

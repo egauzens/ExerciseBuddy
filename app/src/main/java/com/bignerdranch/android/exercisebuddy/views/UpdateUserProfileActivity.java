@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UpdateUserProfileActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -171,10 +171,10 @@ public class UpdateUserProfileActivity extends AppCompatActivity {
     }
 
     private String[] getUserGenders(){
-        return UserSelections.UserInformation.userGenders(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.userGenders(getApplicationContext());
     }
 
     public String[] getUserExperienceLevels(){
-        return UserSelections.UserInformation.getUserExperienceLevels(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.getUserExperienceLevels(getApplicationContext());
     }
 }

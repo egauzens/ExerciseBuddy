@@ -27,6 +27,7 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
         mHasConversation = new ObservableBoolean(false);
         mUserConversationsDbListener = null;
         mUserConversationsDb = null;
+        mConversationId = "";
         mMatch = null;
     }
 
@@ -37,6 +38,7 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
     public void setMatch(User user) {
         this.mMatch = user;
         String sharedConversationId = getSharedConversationId(getMatch(), getUserProfile());
+        addConversationIdsListener();
         setConversationId(sharedConversationId);
     }
 
@@ -59,9 +61,9 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
         }
     }
 
-    public boolean addConversationIdsListener(){
-        if (getMatch() == null){
-            return false;
+    private void addConversationIdsListener(){
+        if (mUserConversationsDbListener != null){
+            return;
         }
         mUserConversationsDb = FirebaseDatabase.getInstance().getReference().child("users").child(getMatch().getUid()).child("conversationIds");
         mUserConversationsDbListener = mUserConversationsDb.addChildEventListener(new ChildEventListener() {
@@ -109,7 +111,6 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
 
             }
         });
-        return true;
     }
 
     public void addConversationToDb(String firstMessage){
@@ -152,6 +153,8 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
         newMessageDb.child("time").setValue(System.currentTimeMillis());
         newMessageDb.child("content").setValue(firstMessage);
         newMessageDb.child("senderUserId").setValue(getMatch().getUid());
+        newMessageDb.child("senderName").setValue(getMatch().getName());
         newMessageDb.child("receiverUserId").setValue(getUserProfile().getUid());
+        newMessageDb.child("receiverName").setValue(getUserProfile().getName());
     }
 }

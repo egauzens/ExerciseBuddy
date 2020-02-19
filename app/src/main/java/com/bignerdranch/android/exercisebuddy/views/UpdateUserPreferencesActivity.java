@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UpdateUserPreferencesActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -142,14 +142,14 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
     }
 
     public String[] getExercises(){
-        return UserSelections.UserInformation.exercises(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.exercises(getApplicationContext());
     }
 
     public String[] getExperienceLevelPreferences(){
-        return UserSelections.UserPreferences.getExperienceLevelPreferences(getApplicationContext());
+        return UserSelectionsHelpers.UserPreferences.getExperienceLevelPreferences(getApplicationContext());
     }
 
     public String[] getGenderPreferences(){
-        return UserSelections.UserPreferences.genderPreferences(getApplicationContext());
+        return UserSelectionsHelpers.UserPreferences.genderPreferences(getApplicationContext());
     }
 }

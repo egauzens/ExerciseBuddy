@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.viewmodels.ExerciseSelectionActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.UserSelections;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 
@@ -63,6 +63,6 @@ public class ExerciseSelectionActivity extends AppCompatActivity {
     }
 
     public String[] getExercises(){
-        return UserSelections.UserInformation.exercises(getApplicationContext());
+        return UserSelectionsHelpers.UserInformation.exercises(getApplicationContext());
     }
 }

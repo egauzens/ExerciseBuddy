@@ -12,25 +12,25 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bignerdranch.android.exercisebuddy.GridItemAdapter;
-import com.bignerdranch.android.exercisebuddy.GridItemClickListener;
+import com.bignerdranch.android.exercisebuddy.adapters.MatchItemAdapter;
+import com.bignerdranch.android.exercisebuddy.interfaces.IMatchItemClickListener;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.viewmodels.UserGridActivityViewModel;
+import com.bignerdranch.android.exercisebuddy.viewmodels.UserMatchesActivityViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class UserGridActivity extends AppCompatActivity implements GridItemClickListener {
-    private UserGridActivityViewModel mViewModel;
-    private RecyclerView mGridItemsRecyclerView;
+public class UserMatchesActivity extends AppCompatActivity implements IMatchItemClickListener {
+    private UserMatchesActivityViewModel mViewModel;
+    private RecyclerView mMatchItemsRecyclerView;
     private ObservableList.OnListChangedCallback mUserMatchesListener;
-    private GridItemAdapter mGridItemAdapter;
+    private MatchItemAdapter mMatchItemAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(UserGridActivityViewModel.class);
-        setContentView(R.layout.activity_user_grid);
-        mGridItemAdapter = new GridItemAdapter(mViewModel.getUserMatches(), this);
+        mViewModel = ViewModelProviders.of(this).get(UserMatchesActivityViewModel.class);
+        setContentView(R.layout.activity_user_matches);
+        mMatchItemAdapter = new MatchItemAdapter(mViewModel.getUserMatches(), this);
         setupRecyclerView();
         mUserMatchesListener = createUserMatchesListener();
         addUserMatchesListener();
@@ -63,7 +63,7 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
 
             @Override
             public void onItemRangeInserted(ObservableList sender, int positionStart, int itemCount) {
-                mGridItemAdapter.notifyItemRangeInserted(positionStart, itemCount);
+                mMatchItemAdapter.notifyItemRangeInserted(positionStart, itemCount);
             }
 
             @Override
@@ -73,20 +73,20 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
 
             @Override
             public void onItemRangeRemoved(ObservableList sender, int positionStart, int itemCount) {
-                mGridItemAdapter.notifyItemRangeRemoved(positionStart, itemCount);
+                mMatchItemAdapter.notifyItemRangeRemoved(positionStart, itemCount);
             }
         };
     }
 
     private void setupRecyclerView(){
-        mGridItemsRecyclerView = (RecyclerView) findViewById(R.id.matches_recycler_view);
-        mGridItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        mGridItemsRecyclerView.setAdapter(mGridItemAdapter);
+        mMatchItemsRecyclerView = (RecyclerView) findViewById(R.id.matches_recycler_view);
+        mMatchItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        mMatchItemsRecyclerView.setAdapter(mMatchItemAdapter);
     }
 
-    public void onGridItemClicked(User gridItem){
+    public void onMatchItemClicked(User gridItem){
         User currentUser = mViewModel.getCurrentUser();
-        Intent intent = new Intent(UserGridActivity.this, MatchProfileActivity.class);
+        Intent intent = new Intent(UserMatchesActivity.this, MatchProfileActivity.class);
         Bundle extras = new Bundle();
         // set the user to the gridItem (which is the match) because the actual profile we are viewing is that of the match.
         // the current logged in user is now considered the match.
@@ -99,7 +99,7 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
     }
 
     public void goToUserProfile(View v){
-        Intent intent = new Intent(UserGridActivity.this, UserProfileActivity.class);
+        Intent intent = new Intent(UserMatchesActivity.this, UserProfileActivity.class);
         Bundle extras = new Bundle();
         extras.putSerializable("user", mViewModel.getCurrentUser());
         intent.putExtras(extras);
@@ -108,7 +108,7 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
     }
 
     public void editUserPreferences(View v){
-        Intent intent = new Intent(UserGridActivity.this, UpdateUserPreferencesActivity.class);
+        Intent intent = new Intent(UserMatchesActivity.this, UpdateUserPreferencesActivity.class);
         Bundle extras = new Bundle();
         extras.putSerializable("user", mViewModel.getCurrentUser());
         intent.putExtras(extras);
@@ -142,9 +142,18 @@ public class UserGridActivity extends AppCompatActivity implements GridItemClick
 
     public void logoutUser(View v){
         FirebaseAuth.getInstance().signOut();
-        Intent intent = new Intent(UserGridActivity.this, LoginOrRegisterActivity.class);
+        Intent intent = new Intent(UserMatchesActivity.this, LoginOrRegisterActivity.class);
         startActivity(intent);
         finish();
+        return;
+    }
+
+    public void goToUserConversations(View v){
+        Intent intent = new Intent(UserMatchesActivity.this, UserConversationsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("userId", mViewModel.getCurrentUser().getUid());
+        intent.putExtras(extras);
+        startActivity(intent);
         return;
     }
 }

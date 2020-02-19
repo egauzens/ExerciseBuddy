@@ -42,7 +42,6 @@ public class MatchProfileActivity extends UserProfileActivity {
         Intent intent = getIntent();
         User match = (User)intent.getSerializableExtra("match");
         ((MatchProfileActivityViewModel)mViewModel).setMatch(match);
-        ((MatchProfileActivityViewModel)mViewModel).addConversationIdsListener();
     }
 
     public void goToMessagingActivity(View v){

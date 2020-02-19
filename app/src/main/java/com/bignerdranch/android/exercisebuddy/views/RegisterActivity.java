@@ -51,7 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if (user != null){
-                    Intent intent = new Intent(RegisterActivity.this, UserGridActivity.class);
+                    Intent intent = new Intent(RegisterActivity.this, UserMatchesActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                     finish();

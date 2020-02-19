@@ -18,9 +18,9 @@ public class Conversation implements Serializable {
         mMessages.add(message);
     }
 
-    public long getTimeOfMostRecentMessage(){
-        int indexOfMostRecentMessage = mMessages.size()-1;
-        return mMessages.get(indexOfMostRecentMessage).getTime();
+    public Message getLastMessage(){
+        int indexOfLastMessage = mMessages.size()-1;
+        return mMessages.get(indexOfLastMessage);
     }
 
     public String getConversationId(){
@@ -29,5 +29,9 @@ public class Conversation implements Serializable {
 
     public String getReceiverUserId(){ return mMessages.get(0).getReceiverId(); }
 
+    public String getReceiverName() { return mMessages.get(0).getReceiverName(); }
+
     public String getSenderUserId() { return mMessages.get(0).getSenderId(); }
+
+    public String getSenderName() { return mMessages.get(0).getSenderName(); }
 }
