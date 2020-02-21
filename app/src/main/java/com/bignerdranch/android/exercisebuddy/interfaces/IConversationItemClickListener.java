@@ -1,7 +1,7 @@
 package com.bignerdranch.android.exercisebuddy.interfaces;
 
-import com.bignerdranch.android.exercisebuddy.models.Conversation;
-
 public interface IConversationItemClickListener {
-    public void onConversationItemClicked(Conversation conversation);
+    public void onConversationItemTextAreaClicked(String currentUserId, String conversationId);
+
+    public void onConversationItemMatchImageClicked(String matchUserId);
 }

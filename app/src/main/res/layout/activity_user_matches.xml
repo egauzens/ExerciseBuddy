@@ -24,8 +24,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:text="@string/edit_preferences"
-                            android:onClick="editUserPreferences"/>
+                            android:text="@string/preferences"
+                            android:onClick="goToUserPreferences"/>
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

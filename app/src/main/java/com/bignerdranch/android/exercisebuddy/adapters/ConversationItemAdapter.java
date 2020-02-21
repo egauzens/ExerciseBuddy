@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,15 +16,13 @@ import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
 import com.bignerdranch.android.exercisebuddy.models.Conversation;
 import com.bignerdranch.android.exercisebuddy.models.Message;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationItemAdapter.ConversationItemHolder> {
@@ -57,6 +56,7 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
     }
 
     class ConversationItemHolder extends RecyclerView.ViewHolder{
+        private LinearLayout mConversationItemTextArea;
         private TextView mMatchNameTextView;
         private TextView mLastMessageTextView;
         private TextView mLastMessageTimeTextView;
@@ -66,6 +66,7 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
         public ConversationItemHolder(LayoutInflater inflater, ViewGroup parent){
             super(inflater.inflate(R.layout.item_conversation, parent, false));
             mContext = parent.getContext();
+            mConversationItemTextArea = (LinearLayout) itemView.findViewById(R.id.conversation_text_linear_layout);
             mMatchNameTextView = (TextView) itemView.findViewById(R.id.match_name_text_view);
             mLastMessageTextView = (TextView) itemView.findViewById(R.id.last_message_text_view);
             mLastMessageTimeTextView = (TextView) itemView.findViewById(R.id.last_message_time_text_view);
@@ -74,33 +75,25 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
 
         public void bind(final Conversation conversation, final String userId, final IConversationItemClickListener listener){
             Message lastMessage = conversation.getLastMessage();
+            final String matchUserId = getMatchUserId(conversation, userId);
 
             mMatchNameTextView.setText(getMatchName(conversation, userId));
             mLastMessageTextView.setText(lastMessage.getText());
             mLastMessageTimeTextView.setText(String.valueOf(lastMessage.getTime()));
+            mConversationItemTextArea.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onConversationItemTextAreaClicked(userId, conversation.getConversationId());
+                }
+            });
             mMatchImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onConversationItemClicked(conversation);
+                    listener.onConversationItemMatchImageClicked(matchUserId);
                 }
             });
 
-            loadProfileImage(getMatchUserId(conversation, userId));
-        }
-
-        private void loadProfileImage(String userId){
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(mContext).load(uri).into(mMatchImage);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    return;
-                }
-            });
+            StorageHelper.loadProfileImageFromStorageIntoImageView(mContext, matchUserId, mMatchImage);
         }
 
         private String getMatchUserId(Conversation conversation, String userId){

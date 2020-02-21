@@ -1,12 +1,7 @@
 package com.bignerdranch.android.exercisebuddy.views;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bignerdranch.android.exercisebuddy.R;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,12 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -116,41 +107,10 @@ public class RegisterActivity extends AppCompatActivity {
         userInfo.put("upperAgePreference", extras.getInt("upperAgePreference"));
         userInfo.put("experienceLevelPreference", extras.getString("experienceLevelPreference"));
         userInfo.put("userDescription", extras.getString("userDescription"));
-        loadProfileImageIntoStorage(profileImageUrl);
+        String userId = mAuth.getCurrentUser().getUid();
+        StorageHelper.loadProfileImageIntoStorage(profileImageUrl, userId, this.getContentResolver());
 
         return userInfo;
-    }
-
-    private boolean loadProfileImageIntoStorage(String imageUrl){
-        if (imageUrl.isEmpty()) {
-            return false;
-        }
-        else {
-            Uri imageUri = Uri.parse(imageUrl);
-            Bitmap bitmap = null;
-            String userId = mAuth.getCurrentUser().getUid();
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.Source source = ImageDecoder.createSource(this.getContentResolver(), imageUri);
-                try {
-                    bitmap = ImageDecoder.decodeBitmap(source);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), imageUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
-            byte[] data = outputStream.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-            return uploadTask.isSuccessful();
-        }
     }
 
     private String convertCalendarToString(Calendar calendar){

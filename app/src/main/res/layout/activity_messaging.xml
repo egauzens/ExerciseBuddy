@@ -11,17 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="15dp">
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_marginBottom="10dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/messages_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="vertical"
             android:orientation="vertical"/>
-        </ScrollView>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,7 +26,7 @@
             android:gravity="right">
             <EditText
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textMultiLine"
                 android:maxLength="300"
@@ -39,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/send_message"
+                android:layout_gravity="center"
                 android:onClick="sendMessage"/>
         </LinearLayout>
     </LinearLayout>

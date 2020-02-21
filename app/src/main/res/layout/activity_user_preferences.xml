@@ -3,54 +3,39 @@
     <data>
         <variable
             name="viewModel"
-            type="com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel" />
+            type="com.bignerdranch.android.exercisebuddy.viewmodels.UserPreferencesActivityViewModel" />
     </data>
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_margin="10dp"
-            android:layout_gravity="center">
-            <ImageView
-                android:id="@+id/profile_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
         <TextView
-            android:id="@+id/name_text_view"
+            android:id="@+id/exercise_preference_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:layout_margin="10dp"/>
         <TextView
-            android:id="@+id/age_text_view"
+            android:id="@+id/gender_preference_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:layout_margin="10dp"/>
         <TextView
-            android:id="@+id/gender_text_view"
+            android:id="@+id/experience_level_preference_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:layout_margin="10dp"/>
         <TextView
-            android:id="@+id/experience_level_text_view"
+            android:id="@+id/lower_age_preference_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:layout_margin="10dp"/>
         <TextView
-            android:id="@+id/description_text_view"
+            android:id="@+id/upper_age_preference_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -58,8 +43,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/edit_profile"
+            android:text="@string/edit_preferences"
             android:layout_margin="10dp"
-            android:onClick="editProfile"/>
+            android:onClick="editUserPreferences"/>
     </LinearLayout>
 </layout>

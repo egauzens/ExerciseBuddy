@@ -13,6 +13,7 @@
     <string name="anyone">Anyone</string>
     <string name="logout">Logout</string>
     <string name="profile">Profile</string>
+    <string name="preferences">Preferences</string>
     <string name="update">Update</string>
     <string name="user_statement">I am a:</string>
     <string name="born">Born on:</string>
@@ -43,11 +44,10 @@
     <string name="select_experience_level_preference">What experience level do you want your exercise buddy to be?</string>
     <string name="description_text">Tell us about yourself (optional):</string>
     <string name="description_hint">Write something about yourself for others to read (optional)</string>
-    <string name="update_exercise_preference">I want to go:</string>
-    <string name="update_gender_preference">My gender preference to exercise with is:</string>
-    <string name="update_experience_level_preference">My experience level preference to exercise with is:</string>
+    <string name="exercise_preference">I want to go:</string>
+    <string name="gender_preference">My gender preference to exercise with is:</string>
+    <string name="experience_level_preference">My experience level preference to exercise with is:</string>
     <string name="edit_preferences">Edit preferences</string>
-    <string name="update_preferences">Update preferences</string>
     <string name="edit_profile">Edit profile</string>
     <string name="experience_level">Experience level: </string>
     <string name="gender">Gender: </string>

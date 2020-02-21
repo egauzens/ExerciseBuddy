@@ -2,20 +2,20 @@ package com.bignerdranch.android.exercisebuddy.viewmodels;
 
 import androidx.lifecycle.ViewModel;
 
-import com.bignerdranch.android.exercisebuddy.models.User;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserProfileSettings;
 
 public class UpdateUserProfileActivityViewModel extends ViewModel {
-    public User mUser;
+    private UserProfileSettings mUserProfileSettings;
 
     public UpdateUserProfileActivityViewModel(){
-        mUser = null;
+        mUserProfileSettings = null;
     }
 
-    public User getUser() {
-        return mUser;
+    public UserProfileSettings getProfileUserSettings() {
+        return mUserProfileSettings;
     }
 
-    public void setUser(User user) {
-        this.mUser = user;
+    public void setProfileUserSettings(UserProfileSettings settings) {
+        this.mUserProfileSettings = settings;
     }
 }

@@ -1,7 +1,6 @@
 package com.bignerdranch.android.exercisebuddy.views;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -9,17 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.models.User;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 public abstract class ProfileActivity extends AppCompatActivity {
     protected UserProfileActivityViewModel mViewModel;
@@ -43,11 +36,24 @@ public abstract class ProfileActivity extends AppCompatActivity {
         mDescriptionTextView = (TextView) findViewById(R.id.description_text_view);
         mProfileImageView = (ImageView) findViewById(R.id.profile_image_view);
 
-        if (mViewModel.getUserProfile() == null){
+        if (!mViewModel.getAreAllUsersLoaded().getValue()){
             InitializeViewModel();
+            mViewModel.getAreAllUsersLoaded().observe(this, areAllUsersLoadedObserver);
         }
-        InitializeUI();
+        else {
+            InitializeUI();
+        }
     }
+
+    final Observer<Boolean> areAllUsersLoadedObserver = new Observer<Boolean>() {
+        @Override
+        public void onChanged(@Nullable final Boolean isLoaded) {
+            if (isLoaded){
+                InitializeUI();
+                mViewModel.getAreAllUsersLoaded().removeObserver(areAllUsersLoadedObserver);
+            }
+        }
+    };
 
     public abstract UserProfileActivityViewModel getViewModel();
 
@@ -55,31 +61,19 @@ public abstract class ProfileActivity extends AppCompatActivity {
 
     protected void InitializeViewModel(){
         Intent intent = getIntent();
-        User user = (User)intent.getSerializableExtra("user");
-        mViewModel.setUserProfile(user);
+        String profileUserId = (String)intent.getSerializableExtra("profileUserId");
+        mViewModel.setProfileUserId(profileUserId);
     }
 
     private void InitializeUI() {
-        mNameTextView.setText(getString(R.string.name) + " " + mViewModel.getUserProfile().getName());
-        mAgeTextView.setText(getString(R.string.age) + " " + mViewModel.getUserProfile().getAge());
-        mGenderTextView.setText(getString(R.string.gender) + " " + mViewModel.getUserProfile().getGender());
-        mExperienceLevelTextView.setText(getString(R.string.experience_level) + " " + mViewModel.getUserProfile().getExperienceLevel());
-        mDescriptionTextView.setText(getString(R.string.bio) + " " + mViewModel.getUserProfile().getDescription());
-        loadProfileImage();
-    }
-
-    private void loadProfileImage(){
-        final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(mViewModel.getUserProfile().getUid());
-        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Glide.with(getApplication()).load(uri).into(mProfileImageView);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                return;
-            }
-        });
+        if (!mViewModel.getAreAllUsersLoaded().getValue()){
+            return;
+        }
+        mNameTextView.setText(getString(R.string.name) + " " + mViewModel.getProfileUserName());
+        mAgeTextView.setText(getString(R.string.age) + " " + mViewModel.getProfileUserAge());
+        mGenderTextView.setText(getString(R.string.gender) + " " + mViewModel.getProfileUserGender());
+        mExperienceLevelTextView.setText(getString(R.string.experience_level) + " " + mViewModel.getProfileUserExperienceLevel());
+        mDescriptionTextView.setText(getString(R.string.bio) + " " + mViewModel.getProfileUserDescription());
+        StorageHelper.loadProfileImageFromStorageIntoImageView(this, mViewModel.getProfileUserId(), mProfileImageView);
     }
 }

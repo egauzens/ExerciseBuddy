@@ -1,6 +1,10 @@
-package com.bignerdranch.android.exercisebuddy.models;
+package com.bignerdranch.android.exercisebuddy.staticHelpers;
 
-public class UserPreferences {
+import androidx.annotation.Nullable;
+
+import java.io.Serializable;
+
+public class UserPreferencesSettings implements Serializable {
     private String mExercisePreference;
     private String mGenderPreference;
     private int mMinimumAgePreference;
@@ -8,7 +12,7 @@ public class UserPreferences {
     private String mExperienceLevelPreference;
     private int mDistancePreference;
 
-    public UserPreferences(String exercise, String gender, int minAge, int maxAge, String experienceLevel){
+    public UserPreferencesSettings(String exercise, String gender, int minAge, int maxAge, String experienceLevel){
         mExercisePreference = exercise;
         mGenderPreference = gender;
         mMinimumAgePreference = minAge;
@@ -62,5 +66,36 @@ public class UserPreferences {
 
     public void setDistancePreference(int distancePreference) {
         this.mDistancePreference = distancePreference;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (!obj.getClass().equals(UserPreferencesSettings.class)){
+            return false;
+        }
+        else{
+            UserPreferencesSettings userPreferencesSettings = (UserPreferencesSettings) obj;
+            return areSettingsEqual(userPreferencesSettings);
+        }
+    }
+
+    private boolean areSettingsEqual(UserPreferencesSettings settings){
+        if (!settings.getExercisePreference().equals(mExercisePreference)){
+            return false;
+        }
+        if (!settings.getGenderPreference().equals(mGenderPreference)){
+            return false;
+        }
+        if (settings.getExperienceLevelPreference() != mExperienceLevelPreference){
+            return false;
+        }
+        if (settings.getMinimumAgePreference() != mMinimumAgePreference){
+            return false;
+        }
+        if (settings.getMaximumAgePreference() != mMaximumAgePreference){
+            return false;
+        }
+
+        return true;
     }
 }

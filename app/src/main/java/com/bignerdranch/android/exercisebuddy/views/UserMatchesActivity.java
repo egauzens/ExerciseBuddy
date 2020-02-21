@@ -1,6 +1,5 @@
 package com.bignerdranch.android.exercisebuddy.views;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -15,15 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.adapters.MatchItemAdapter;
 import com.bignerdranch.android.exercisebuddy.interfaces.IMatchItemClickListener;
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.models.User;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserMatchesActivityViewModel;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class UserMatchesActivity extends AppCompatActivity implements IMatchItemClickListener {
     private UserMatchesActivityViewModel mViewModel;
     private RecyclerView mMatchItemsRecyclerView;
-    private ObservableList.OnListChangedCallback mUserMatchesListener;
     private MatchItemAdapter mMatchItemAdapter;
+    final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,8 +30,14 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         setContentView(R.layout.activity_user_matches);
         mMatchItemAdapter = new MatchItemAdapter(mViewModel.getUserMatches(), this);
         setupRecyclerView();
-        mUserMatchesListener = createUserMatchesListener();
         addUserMatchesListener();
+        if (mViewModel.getCurrentUserId().isEmpty()){
+            initializeViewModel();
+        }
+    }
+
+    private void initializeViewModel(){
+        mViewModel.setCurrentUserId(userId);
     }
 
     @Override
@@ -43,15 +47,15 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
     }
 
     private void addUserMatchesListener(){
-        mViewModel.getUserMatches().addOnListChangedCallback(mUserMatchesListener);
+        mViewModel.getUserMatches().addOnListChangedCallback(userMatchesListener);
     }
 
     private void removeUserMatchesListener(){
-        mViewModel.getUserMatches().removeOnListChangedCallback(mUserMatchesListener);
+        mViewModel.getUserMatches().removeOnListChangedCallback(userMatchesListener);
     }
 
-    private ObservableList.OnListChangedCallback createUserMatchesListener(){
-        return new ObservableList.OnListChangedCallback() {
+    private final ObservableList.OnListChangedCallback userMatchesListener =
+        new ObservableList.OnListChangedCallback() {
             @Override
             public void onChanged(ObservableList sender) {
             }
@@ -76,7 +80,6 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
                 mMatchItemAdapter.notifyItemRangeRemoved(positionStart, itemCount);
             }
         };
-    }
 
     private void setupRecyclerView(){
         mMatchItemsRecyclerView = (RecyclerView) findViewById(R.id.matches_recycler_view);
@@ -84,14 +87,14 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         mMatchItemsRecyclerView.setAdapter(mMatchItemAdapter);
     }
 
-    public void onMatchItemClicked(User gridItem){
-        User currentUser = mViewModel.getCurrentUser();
+    public void onMatchItemClicked(String profileUserId){
+        String currentUserId = mViewModel.getCurrentUserId();
         Intent intent = new Intent(UserMatchesActivity.this, MatchProfileActivity.class);
         Bundle extras = new Bundle();
         // set the user to the gridItem (which is the match) because the actual profile we are viewing is that of the match.
         // the current logged in user is now considered the match.
-        extras.putSerializable("user", gridItem);
-        extras.putSerializable("match", currentUser);
+        extras.putSerializable("profileUserId", profileUserId);
+        extras.putSerializable("matchUserId", currentUserId);
 
         intent.putExtras(extras);
         startActivity(intent);
@@ -101,43 +104,28 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
     public void goToUserProfile(View v){
         Intent intent = new Intent(UserMatchesActivity.this, UserProfileActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("user", mViewModel.getCurrentUser());
+        extras.putSerializable("profileUserId", mViewModel.getCurrentUserId());
         intent.putExtras(extras);
         startActivityForResult(intent, 3);
         return;
     }
 
-    public void editUserPreferences(View v){
-        Intent intent = new Intent(UserMatchesActivity.this, UpdateUserPreferencesActivity.class);
+    public void goToUserPreferences(View v){
+        Intent intent = new Intent(UserMatchesActivity.this, UserPreferencesActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("user", mViewModel.getCurrentUser());
+        extras.putSerializable("userId", mViewModel.getCurrentUserId());
         intent.putExtras(extras);
         startActivityForResult(intent, 2);
         return;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 2 && resultCode == Activity.RESULT_OK){
-            if (data.hasExtra("newUserData")){
-                User newUserData = (User) data.getSerializableExtra("newUserData");
-                if (!mViewModel.getCurrentUser().arePreferencesEqual(newUserData)){
-                    mViewModel.updateDatabase(newUserData);
-                }
-            }
-        }
-        if (requestCode == 3 && resultCode == Activity.RESULT_OK){
-            if (data.hasExtra("newUserData")){
-                User newUserData = (User) data.getSerializableExtra("newUserData");
-                if (!mViewModel.getCurrentUser().areProfilesEqual(newUserData)){
-                    if (!mViewModel.getCurrentUser().getProfileImageUri().equals(newUserData.getProfileImageUri())){
-                        mViewModel.loadProfileImageIntoStorage(newUserData, this.getContentResolver());
-                    }
-                    mViewModel.updateDatabase(newUserData);
-                }
-            }
-        }
+    public void goToUserConversations(View v){
+        Intent intent = new Intent(UserMatchesActivity.this, UserConversationsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("userId", mViewModel.getCurrentUserId());
+        intent.putExtras(extras);
+        startActivity(intent);
+        return;
     }
 
     public void logoutUser(View v){
@@ -145,15 +133,6 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         Intent intent = new Intent(UserMatchesActivity.this, LoginOrRegisterActivity.class);
         startActivity(intent);
         finish();
-        return;
-    }
-
-    public void goToUserConversations(View v){
-        Intent intent = new Intent(UserMatchesActivity.this, UserConversationsActivity.class);
-        Bundle extras = new Bundle();
-        extras.putSerializable("userId", mViewModel.getCurrentUser().getUid());
-        intent.putExtras(extras);
-        startActivity(intent);
         return;
     }
 }

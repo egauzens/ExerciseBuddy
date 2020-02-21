@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.adapters.ConversationItemAdapter;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
-import com.bignerdranch.android.exercisebuddy.models.Conversation;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserConversationsActivityViewModel;
 
 public class UserConversationsActivity extends AppCompatActivity implements IConversationItemClickListener {
@@ -88,10 +87,22 @@ public class UserConversationsActivity extends AppCompatActivity implements ICon
         mGridItemsRecyclerView.setAdapter(mConversationItemAdapter);
     }
 
-    public void onConversationItemClicked(Conversation conversationItem){
+    public void onConversationItemTextAreaClicked(String currentUserId, String conversationId){
         Intent intent = new Intent(UserConversationsActivity.this, MessagingActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("conversation", conversationItem);
+        extras.putSerializable("conversationId", conversationId);
+        extras.putString("userId", currentUserId);
+
+        intent.putExtras(extras);
+        startActivity(intent);
+        return;
+    }
+
+    public void onConversationItemMatchImageClicked(String userIdOfProfile){
+        Intent intent = new Intent(UserConversationsActivity.this, MatchProfileActivity.class);
+        Bundle extras = new Bundle();
+        extras.putSerializable("profileUserId", userIdOfProfile);
+        extras.putSerializable("matchUserId", mViewModel.getUserId());
 
         intent.putExtras(extras);
         startActivity(intent);

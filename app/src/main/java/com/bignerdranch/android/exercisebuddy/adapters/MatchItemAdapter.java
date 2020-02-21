@@ -1,7 +1,6 @@
 package com.bignerdranch.android.exercisebuddy.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.interfaces.IMatchItemClickListener;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
 
 import java.util.List;
 
@@ -71,25 +64,10 @@ public class MatchItemAdapter extends RecyclerView.Adapter<MatchItemAdapter.Matc
             mUserImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onMatchItemClicked(userMatch);
+                    listener.onMatchItemClicked(userMatch.getUid());
                 }
             });
-            loadProfileImage(userMatch.getUid());
-        }
-
-        private void loadProfileImage(String userId){
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(mContext).load(uri).into(mUserImage);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    return;
-                }
-            });
+            StorageHelper.loadProfileImageFromStorageIntoImageView(mContext, userMatch.getUid(), mUserImage);
         }
     }
 }

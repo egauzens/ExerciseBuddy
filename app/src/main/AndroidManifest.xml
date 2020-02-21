@@ -30,6 +30,7 @@
         <activity android:name=".views.RegisterActivity"/>
         <activity android:name=".views.UserMatchesActivity"/>
         <activity android:name=".views.UserProfileActivity"/>
+        <activity android:name=".views.UserPreferencesActivity"/>
         <activity android:name=".views.UpdateUserPreferencesActivity"/>
         <activity android:name=".views.UpdateUserProfileActivity"/>
         <activity android:name=".views.MatchProfileActivity"/>

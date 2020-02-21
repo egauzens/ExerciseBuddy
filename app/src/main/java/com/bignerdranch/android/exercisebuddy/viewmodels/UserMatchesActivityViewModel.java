@@ -1,18 +1,12 @@
 package com.bignerdranch.android.exercisebuddy.viewmodels;
 
-import android.content.ContentResolver;
-import android.graphics.Bitmap;
-import android.graphics.ImageDecoder;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.MediaStore;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
 import com.bignerdranch.android.exercisebuddy.models.User;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ModelCreationHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -22,124 +16,44 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class UserMatchesActivityViewModel extends ViewModel {
     public final ObservableArrayList<User> mUserMatches;
+    private String mCurrentUserId;
     private User mCurrentUser;
     private Query mUsersDBQuery;
     private ChildEventListener mUsersListener;
 
     public UserMatchesActivityViewModel(){
         mUserMatches = new ObservableArrayList<>();
+        mCurrentUserId = "";
+    }
 
+    public void setCurrentUserId(String userId){
+        if (!mCurrentUserId.isEmpty()) {
+            return;
+        }
+        mCurrentUserId = userId;
         addListenerForUserSettings();
     }
 
-    public User getCurrentUser() {
-        return mCurrentUser;
+    public String getCurrentUserId() {
+        return mCurrentUserId;
     }
 
     public ObservableArrayList<User> getUserMatches() {
         return mUserMatches;
     }
 
-    public void updateDatabase(User newUserSettings){
-        DatabaseReference currentUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(newUserSettings.getUid());
-        if (!newUserSettings.getExercise().equals(mCurrentUser.getExercise()))
-        {
-            currentUserDatabase.child("exercise").setValue(newUserSettings.getExercise());
-        }
-        if (!newUserSettings.getGenderPreference().equals(mCurrentUser.getGenderPreference()))
-        {
-            currentUserDatabase.child("genderPreference").setValue(newUserSettings.getGenderPreference());
-        }
-        if(!newUserSettings.getExperienceLevelPreference().equals(mCurrentUser.getExperienceLevelPreference()))
-        {
-            currentUserDatabase.child("experienceLevelPreference").setValue(newUserSettings.getExperienceLevelPreference());
-        }
-        if(newUserSettings.getMaximumAgePreference() != mCurrentUser.getMaximumAgePreference())
-        {
-            currentUserDatabase.child("upperAgePreference").setValue(newUserSettings.getMaximumAgePreference());
-        }
-        if(newUserSettings.getMinimumAgePreference() != mCurrentUser.getMinimumAgePreference())
-        {
-            currentUserDatabase.child("lowerAgePreference").setValue(newUserSettings.getMinimumAgePreference());
-        }
-        if(!newUserSettings.getProfileImageUri().equals(mCurrentUser.getProfileImageUri()))
-        {
-            currentUserDatabase.child("profileImageUri").setValue(newUserSettings.getProfileImageUri());
-        }
-        if(!newUserSettings.getDob().equals(mCurrentUser.getDob()))
-        {
-            currentUserDatabase.child("dateOfBirth").setValue(newUserSettings.getDob());
-        }
-        if(!newUserSettings.getGender().equals(mCurrentUser.getGender()))
-        {
-            currentUserDatabase.child("userGender").setValue(newUserSettings.getGender());
-        }
-        if(!newUserSettings.getDescription().equals(mCurrentUser.getDescription()))
-        {
-            currentUserDatabase.child("userDescription").setValue(newUserSettings.getDescription());
-        }
-        if(!newUserSettings.getExperienceLevel().equals(mCurrentUser.getExperienceLevel()))
-        {
-            currentUserDatabase.child("userExperienceLevel").setValue(newUserSettings.getExperienceLevel());
-        }
-        if(!newUserSettings.getName().equals(mCurrentUser.getName()))
-        {
-            currentUserDatabase.child("name").setValue(newUserSettings.getName());
-        }
-    }
-
-    public boolean loadProfileImageIntoStorage(User user, ContentResolver resolver){
-        String imageUrl = user.getProfileImageUri();
-        if (imageUrl.isEmpty()) {
-            return false;
-        }
-        else {
-            Uri imageUri = Uri.parse(imageUrl);
-            Bitmap bitmap = null;
-            String userId = user.getUid();
-            final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                ImageDecoder.Source source = ImageDecoder.createSource(resolver, imageUri);
-                try {
-                    bitmap = ImageDecoder.decodeBitmap(source);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(resolver, imageUri);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 20, outputStream);
-            byte[] data = outputStream.toByteArray();
-            UploadTask uploadTask = filePath.putBytes(data);
-            return uploadTask.isSuccessful();
-        }
-    }
-
     private void addListenerForUserSettings(){
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid());
+        DatabaseReference userDb = FirebaseDatabase.getInstance().getReference().child("users").child(getCurrentUserId());
 
         userDb.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     User oldUser = mCurrentUser;
-                    mCurrentUser = createUser(dataSnapshot);
+                    mCurrentUser = ModelCreationHelpers.createUser(dataSnapshot);
                     if (oldUser == null || !oldUser.getExercise().equals(mCurrentUser.getExercise())) {
                         if (oldUser == null){
                             // we know that this is the first time the user info is being retrieved
@@ -159,8 +73,7 @@ public class UserMatchesActivityViewModel extends ViewModel {
     }
 
     private void addListenerForUserConversations(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        final DatabaseReference conversationIdsDb = FirebaseDatabase.getInstance().getReference().child("users").child(user.getUid()).child("conversationIds");
+        final DatabaseReference conversationIdsDb = FirebaseDatabase.getInstance().getReference().child("users").child(getCurrentUserId()).child("conversationIds");
         conversationIdsDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -225,7 +138,7 @@ public class UserMatchesActivityViewModel extends ViewModel {
                 final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (dataSnapshot.exists()) {
                     if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User addedUser = createUser(dataSnapshot);
+                        User addedUser = ModelCreationHelpers.createUser(dataSnapshot);
                         if (mCurrentUser.doesMatchWith(addedUser) && addedUser.doesMatchWith(mCurrentUser)){
                             mUserMatches.add(addedUser);
                         }
@@ -238,7 +151,7 @@ public class UserMatchesActivityViewModel extends ViewModel {
                 final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (dataSnapshot.exists()) {
                     if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User changedUser = createUser(dataSnapshot);
+                        User changedUser = ModelCreationHelpers.createUser(dataSnapshot);
                         for (User user : mUserMatches) {
                             if (user.getUid().equals(changedUser.getUid())){
                                 if (!mCurrentUser.doesMatchWith(changedUser) || !changedUser.doesMatchWith(mCurrentUser))
@@ -261,7 +174,7 @@ public class UserMatchesActivityViewModel extends ViewModel {
                 final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 if (dataSnapshot.exists()) {
                     if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User removedUser = createUser(dataSnapshot);
+                        User removedUser = ModelCreationHelpers.createUser(dataSnapshot);
                         for (User user : mUserMatches) {
                             if (user.getUid().equals(removedUser.getUid())){
                                 mUserMatches.remove(user);
@@ -285,37 +198,5 @@ public class UserMatchesActivityViewModel extends ViewModel {
 
             }
         });
-    }
-
-    private User createUser(DataSnapshot dataSnapshot){
-        String userName = dataSnapshot.child("name").getValue().toString();
-        String exercisePreference = dataSnapshot.child("exercise").getValue().toString();
-        String userGender = dataSnapshot.child("userGender").getValue().toString();
-        String userDob = dataSnapshot.child("dateOfBirth").getValue().toString();
-        String userExperienceLevel = dataSnapshot.child("userExperienceLevel").getValue().toString();
-        String userProfileImageUri = dataSnapshot.child("profileImageUri").getValue().toString();
-        String userDescription = dataSnapshot.child("userDescription").getValue().toString();
-        String genderPreference = dataSnapshot.child("genderPreference").getValue().toString();
-        int lowerAgePreference = Integer.parseInt(dataSnapshot.child("lowerAgePreference").getValue().toString());
-        int upperAgePreference = Integer.parseInt(dataSnapshot.child("upperAgePreference").getValue().toString());
-        String experienceLevelPreference = dataSnapshot.child("experienceLevelPreference").getValue().toString();
-        User user = new User(userName,
-                userGender,
-                userDob,
-                userExperienceLevel,
-                exercisePreference,
-                userProfileImageUri,
-                userDescription,
-                genderPreference,
-                lowerAgePreference,
-                upperAgePreference,
-                experienceLevelPreference,
-                dataSnapshot.getKey());
-
-        for (DataSnapshot child : dataSnapshot.child("conversationIds").getChildren()){
-            user.addConversationId(child.getKey());
-        }
-
-        return user;
     }
 }

@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.UserPreferencesSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UpdateUserPreferencesActivityViewModel;
-import com.bignerdranch.android.exercisebuddy.models.User;
 import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mMinAgePicker = (NumberPicker) findViewById(R.id.lower_age_preference_picker);
         mMaxAgePicker = (NumberPicker) findViewById(R.id.upper_age_preference_picker);
 
-        if (mViewModel.getUser() == null){
+        if (mViewModel.getUserPreferencesSettings() == null){
             InitializeViewModel();
         }
         InitializeUI();
@@ -47,8 +47,8 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
 
     private void InitializeViewModel(){
         Intent intent = getIntent();
-        User user = (User)intent.getSerializableExtra("user");
-        mViewModel.setUser(user);
+        UserPreferencesSettings userPreferencesSettings = (UserPreferencesSettings) intent.getSerializableExtra("userPreferencesSettings");
+        mViewModel.setUserPreferencesSettings(userPreferencesSettings);
     }
 
     private void InitializeUI() {
@@ -64,11 +64,11 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mExercisePicker.setMinValue(0);
         mExercisePicker.setMaxValue(exercises.length-1);
         mExercisePicker.setDisplayedValues(exercises);
-        mExercisePicker.setValue(Arrays.asList(exercises).indexOf(mViewModel.getUser().getExercise()));
+        mExercisePicker.setValue(Arrays.asList(exercises).indexOf(mViewModel.getUserPreferencesSettings().getExercisePreference()));
         mExercisePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.getUser().setExercise(exercises[newVal]);
+                mViewModel.getUserPreferencesSettings().setExercise(exercises[newVal]);
             }
         });
     }
@@ -79,11 +79,11 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mGenderPicker.setMinValue(0);
         mGenderPicker.setMaxValue(genderPreferences.length-1);
         mGenderPicker.setDisplayedValues(genderPreferences);
-        mGenderPicker.setValue(Arrays.asList(genderPreferences).indexOf(mViewModel.getUser().getGenderPreference()));
+        mGenderPicker.setValue(Arrays.asList(genderPreferences).indexOf(mViewModel.getUserPreferencesSettings().getGenderPreference()));
         mGenderPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.getUser().setGenderPreference(genderPreferences[newVal]);
+                mViewModel.getUserPreferencesSettings().setGenderPreference(genderPreferences[newVal]);
             }
         });
     }
@@ -94,11 +94,11 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mExperienceLevelPicker.setMinValue(0);
         mExperienceLevelPicker.setMaxValue(experienceLevelPreferences.length-1);
         mExperienceLevelPicker.setDisplayedValues(experienceLevelPreferences);
-        mExperienceLevelPicker.setValue(Arrays.asList(experienceLevelPreferences).indexOf(mViewModel.getUser().getExperienceLevelPreference()));
+        mExperienceLevelPicker.setValue(Arrays.asList(experienceLevelPreferences).indexOf(mViewModel.getUserPreferencesSettings().getExperienceLevelPreference()));
         mExperienceLevelPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.getUser().setExperienceLevelPreference(experienceLevelPreferences[newVal]);
+                mViewModel.getUserPreferencesSettings().setExperienceLevelPreference(experienceLevelPreferences[newVal]);
             }
         });
     }
@@ -107,28 +107,28 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
         mMinAgePicker.setWrapSelectorWheel(false);
         mMinAgePicker.setMinValue(YOUNGEST_AGE);
         mMinAgePicker.setMaxValue(OLDEST_AGE);
-        mMinAgePicker.setValue(mViewModel.getUser().getMinimumAgePreference());
+        mMinAgePicker.setValue(mViewModel.getUserPreferencesSettings().getMinimumAgePreference());
         mMinAgePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.getUser().setMinimumAgePreference(newVal);
-                if (newVal > mViewModel.getUser().getMaximumAgePreference()){
+                mViewModel.getUserPreferencesSettings().setMinimumAgePreference(newVal);
+                if (newVal > mViewModel.getUserPreferencesSettings().getMaximumAgePreference()){
                     mMaxAgePicker.setValue(newVal);
-                    mViewModel.getUser().setMaximumAgePreference(newVal);
+                    mViewModel.getUserPreferencesSettings().setMaximumAgePreference(newVal);
                 }
             }
         });
         mMaxAgePicker.setWrapSelectorWheel(false);
         mMaxAgePicker.setMinValue(YOUNGEST_AGE);
         mMaxAgePicker.setMaxValue(OLDEST_AGE);
-        mMaxAgePicker.setValue(mViewModel.getUser().getMaximumAgePreference());
+        mMaxAgePicker.setValue(mViewModel.getUserPreferencesSettings().getMaximumAgePreference());
         mMaxAgePicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                mViewModel.getUser().setMaximumAgePreference(newVal);
-                if (newVal < mViewModel.getUser().getMinimumAgePreference()){
+                mViewModel.getUserPreferencesSettings().setMaximumAgePreference(newVal);
+                if (newVal < mViewModel.getUserPreferencesSettings().getMinimumAgePreference()){
                     mMinAgePicker.setValue(newVal);
-                    mViewModel.getUser().setMinimumAgePreference(newVal);
+                    mViewModel.getUserPreferencesSettings().setMinimumAgePreference(newVal);
                 }
             }
         });
@@ -136,7 +136,7 @@ public class UpdateUserPreferencesActivity extends AppCompatActivity {
 
     public void updateUserPreferences(View v){
         Intent data = new Intent();
-        data.putExtra("newUserData", mViewModel.getUser());
+        data.putExtra("newUserPreferencesSettings", mViewModel.getUserPreferencesSettings());
         setResult(RESULT_OK, data);
         finish();
     }

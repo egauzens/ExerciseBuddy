@@ -1,10 +1,14 @@
 package com.bignerdranch.android.exercisebuddy.viewmodels;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.ObservableBoolean;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.bignerdranch.android.exercisebuddy.models.User;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ModelCreationHelpers;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,44 +20,83 @@ import java.util.ArrayList;
 
 public class MatchProfileActivityViewModel extends UserProfileActivityViewModel {
 
-    private User mMatch;
+    private String mMatchUserId;
     private String mConversationId;
-    private final ObservableBoolean mHasConversation;
+    private final MutableLiveData<Boolean> mHasConversation;
     private ChildEventListener mUserConversationsDbListener;
     private DatabaseReference mUserConversationsDb;
+    private User mMatchUser;
+    private boolean mIsMatchUserLoaded;
 
-    public MatchProfileActivityViewModel(){
-        super();
-        mHasConversation = new ObservableBoolean(false);
+    public MatchProfileActivityViewModel(Application application){
+        super(application);
+        mHasConversation = new MutableLiveData<>(false);
         mUserConversationsDbListener = null;
         mUserConversationsDb = null;
         mConversationId = "";
-        mMatch = null;
+        mMatchUserId = "";
+        mIsMatchUserLoaded = false;
     }
 
-    public User getMatch() {
-        return mMatch;
+    public String getMatchUserId() {
+        return mMatchUserId;
     }
 
-    public void setMatch(User user) {
-        this.mMatch = user;
-        String sharedConversationId = getSharedConversationId(getMatch(), getUserProfile());
+    public void setMatchUserId(String matchUserId) {
+        this.mMatchUserId = matchUserId;
+        setMatchUser();
+    }
+
+    public String getMatchUserName(){
+        if (mAreAllUsersLoaded.getValue()){
+            return mMatchUser.getName();
+        }
+        return null;
+    }
+
+    @Override
+    protected void setAreAllUsersLoaded(){
+        mAreAllUsersLoaded.setValue(mIsProfileUserLoaded && mIsMatchUserLoaded);
+    }
+
+    private void setMatchUser(){
+        DatabaseReference profileUserDb = FirebaseDatabase.getInstance().getReference().child("users").child(getProfileUserId());
+        profileUserDb.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mMatchUser = ModelCreationHelpers.createUser(dataSnapshot);
+                mIsMatchUserLoaded = true;
+                setAreAllUsersLoaded();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setConversationId(){
+        if (!mAreAllUsersLoaded.getValue()){
+            return;
+        }
+        String sharedConversationId = getSharedConversationId(mMatchUser, mProfileUser);
         addConversationIdsListener();
         setConversationId(sharedConversationId);
     }
 
-    public ObservableBoolean getHasConversation() {
+    public LiveData<Boolean> getHasConversation() {
         return mHasConversation;
     }
 
     public String getConversationId(){ return mConversationId; }
 
-    public void setConversationId(String conversationId) {
+    private void setConversationId(String conversationId) {
         if (mConversationId.isEmpty()){
             this.mConversationId = conversationId;
         }
         if (!conversationId.isEmpty()){
-            mHasConversation.set(true);
+            mHasConversation.setValue(true);
 
         }
         if (mUserConversationsDbListener != null){
@@ -65,7 +108,7 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
         if (mUserConversationsDbListener != null){
             return;
         }
-        mUserConversationsDb = FirebaseDatabase.getInstance().getReference().child("users").child(getMatch().getUid()).child("conversationIds");
+        mUserConversationsDb = FirebaseDatabase.getInstance().getReference().child("users").child(getMatchUserId()).child("conversationIds");
         mUserConversationsDbListener = mUserConversationsDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -78,7 +121,7 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
                         for (DataSnapshot child : dataSnapshot.getChildren()){
                             String receiverUserId = child.child("receiverUserId").getValue(String.class);
                             String senderUserId = child.child("senderUserId").getValue(String.class);
-                            if (receiverUserId.equals(getMatch().getUid()) && senderUserId.equals(getUserProfile().getUid())){
+                            if (receiverUserId.equals(getMatchUserId()) && senderUserId.equals(getProfileUserId())){
                                 setConversationId(dataSnapshot.getKey());
                             }
                         }
@@ -142,8 +185,8 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
 
     private void addConversationIdToUsersDb(String conversationId){
         // Firebase cannot have empty directory paths. Since we only need the key of the child (the convoId itself) then we add a dummy value of true
-        FirebaseDatabase.getInstance().getReference().child("users").child(getMatch().getUid()).child("conversationIds").child(conversationId).setValue(true);
-        FirebaseDatabase.getInstance().getReference().child("users").child(getUserProfile().getUid()).child("conversationIds").child(conversationId).setValue(true);
+        FirebaseDatabase.getInstance().getReference().child("users").child(getMatchUserId()).child("conversationIds").child(conversationId).setValue(true);
+        FirebaseDatabase.getInstance().getReference().child("users").child(getProfileUserId()).child("conversationIds").child(conversationId).setValue(true);
     }
 
     private void addMessageToDb(DatabaseReference conversationDb, String firstMessage){
@@ -152,9 +195,9 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
 
         newMessageDb.child("time").setValue(System.currentTimeMillis());
         newMessageDb.child("content").setValue(firstMessage);
-        newMessageDb.child("senderUserId").setValue(getMatch().getUid());
-        newMessageDb.child("senderName").setValue(getMatch().getName());
-        newMessageDb.child("receiverUserId").setValue(getUserProfile().getUid());
-        newMessageDb.child("receiverName").setValue(getUserProfile().getName());
+        newMessageDb.child("senderUserId").setValue(getMatchUserId());
+        newMessageDb.child("senderName").setValue(getMatchUserName());
+        newMessageDb.child("receiverUserId").setValue(getProfileUserId());
+        newMessageDb.child("receiverName").setValue(getProfileUserName());
     }
 }

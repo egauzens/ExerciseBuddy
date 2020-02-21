@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class User implements Serializable {
+    private String mUid;
     private String mName;
     private String mGender;
     private String mDob;
@@ -18,7 +19,6 @@ public class User implements Serializable {
     private String mExperienceLevelPreference;
     private int mDistancePreference;
     private int mAge;
-    private String mUid;
     private ArrayList<String> mConversationIds;
 
     public User(String name,

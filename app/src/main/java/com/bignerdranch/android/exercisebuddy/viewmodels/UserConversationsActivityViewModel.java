@@ -13,7 +13,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class UserConversationsActivityViewModel extends ViewModel {
     public final ObservableArrayList<Conversation> mUserConversations;
@@ -68,16 +70,39 @@ public class UserConversationsActivityViewModel extends ViewModel {
     }
 
     private void createConversation(final String conversationId) {
-        // we only want to preview the latest message sent which is the one with the largest time
+        // we only want to show the latest message sent which is the one with the largest time
         Query conversationDbQuery = FirebaseDatabase.getInstance().getReference().child("conversations").child(conversationId).orderByChild("time").limitToLast(1);
-        conversationDbQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+        conversationDbQuery.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    Message latestMessage = createMessage(child);
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //Whenever a child is added check if the convo is in mUserConversations. If not then add it. If it is already then update its position to the beginning.
+                String conversationId = dataSnapshot.getRef().getParent().getKey();
+                Conversation cachedConversation = getConversationWithConversationId(mUserConversations, conversationId);
+                Message latestMessage = createMessage(dataSnapshot);
+
+                if (cachedConversation == null){
                     Conversation conversation = new Conversation(latestMessage, conversationId);
                     mUserConversations.add(conversation);
                 }
+                else{
+                    int sourceIndex = mUserConversations.indexOf(cachedConversation);
+                    Collections.rotate(mUserConversations.subList(0, sourceIndex + 1), 1);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
             }
 
             @Override
@@ -85,6 +110,23 @@ public class UserConversationsActivityViewModel extends ViewModel {
 
             }
         });
+    }
+
+    private Message getMessageFromDataSnapshot(DataSnapshot dataSnapshot){
+        Message latestMessage = null;
+        for (DataSnapshot child : dataSnapshot.getChildren()) {
+            latestMessage = createMessage(child);
+        }
+        return latestMessage;
+    }
+
+    private Conversation getConversationWithConversationId(ArrayList<Conversation> conversations, String conversationId){
+        for (Conversation conversation : conversations){
+            if (conversation.getConversationId().equals(conversationId)){
+                return conversation;
+            }
+        }
+        return null;
     }
 
     private Message createMessage(DataSnapshot dataSnapshot){
