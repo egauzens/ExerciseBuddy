@@ -60,8 +60,8 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
     }
 
     private void setMatchUser(){
-        DatabaseReference profileUserDb = FirebaseDatabase.getInstance().getReference().child("users").child(getProfileUserId());
-        profileUserDb.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference matchUserDb = FirebaseDatabase.getInstance().getReference().child("users").child(getMatchUserId());
+        matchUserDb.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mMatchUser = ModelCreationHelpers.createUser(dataSnapshot);

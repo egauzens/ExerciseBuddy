@@ -15,6 +15,8 @@ import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.models.User;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MatchProfileActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MessagingActivityViewModel;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MessagingActivity extends AppCompatActivity {
     /*private MessagingActivityViewModel mViewModel;
@@ -91,5 +93,13 @@ public class MessagingActivity extends AppCompatActivity {
 
     public void sendMessage(View v){
 
+    }
+
+    private String addMessageToConversationsDb(String message, String conversationId){
+        // generates a unique id for the conversation and adds a child to the conversations node
+        DatabaseReference conversationDb = FirebaseDatabase.getInstance().getReference().child("conversations").child(conversationId);
+        String messageId = addMessageToDb(conversationDb, message);
+
+        return messageId;
     }*/
 }

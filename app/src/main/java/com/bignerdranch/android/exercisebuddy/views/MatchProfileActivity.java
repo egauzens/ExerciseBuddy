@@ -70,7 +70,7 @@ public class MatchProfileActivity extends UserProfileActivity {
         return;
     }
 
-    public void sendMessage(View v){
+    public void sendFirstMessage(View v){
         if(!mViewModel.getAreAllUsersLoaded().getValue())
         {
             return;

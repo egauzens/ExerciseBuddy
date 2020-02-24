@@ -64,18 +64,19 @@
             <EditText
                 android:id="@+id/first_message_edit_text"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:inputType="textMultiLine"
                 android:maxLength="300"
+                android:maxHeight="200dp"
                 android:scrollbars="vertical"
-                android:hint="@string/message_hint"
-                />
+                android:hint="@string/message_hint"/>
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="@string/send_message"
-                android:onClick="sendMessage"/>
+                android:onClick="sendFirstMessage"/>
         </LinearLayout>
     </LinearLayout>
 </layout>

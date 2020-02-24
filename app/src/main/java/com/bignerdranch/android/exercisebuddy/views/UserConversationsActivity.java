@@ -98,10 +98,10 @@ public class UserConversationsActivity extends AppCompatActivity implements ICon
         return;
     }
 
-    public void onConversationItemMatchImageClicked(String userIdOfProfile){
+    public void onConversationItemMatchImageClicked(String profileUserId){
         Intent intent = new Intent(UserConversationsActivity.this, MatchProfileActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("profileUserId", userIdOfProfile);
+        extras.putSerializable("profileUserId", profileUserId);
         extras.putSerializable("matchUserId", mViewModel.getUserId());
 
         intent.putExtras(extras);
