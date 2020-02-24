@@ -112,14 +112,6 @@ public class UserConversationsActivityViewModel extends ViewModel {
         });
     }
 
-    private Message getMessageFromDataSnapshot(DataSnapshot dataSnapshot){
-        Message latestMessage = null;
-        for (DataSnapshot child : dataSnapshot.getChildren()) {
-            latestMessage = createMessage(child);
-        }
-        return latestMessage;
-    }
-
     private Conversation getConversationWithConversationId(ArrayList<Conversation> conversations, String conversationId){
         for (Conversation conversation : conversations){
             if (conversation.getConversationId().equals(conversationId)){

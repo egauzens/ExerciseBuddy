@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.adapters.ConversationItemAdapter;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserConversationsActivityViewModel;
 
 public class UserConversationsActivity extends AppCompatActivity implements IConversationItemClickListener {
@@ -87,11 +88,10 @@ public class UserConversationsActivity extends AppCompatActivity implements ICon
         mGridItemsRecyclerView.setAdapter(mConversationItemAdapter);
     }
 
-    public void onConversationItemTextAreaClicked(String currentUserId, String conversationId){
+    public void onConversationItemTextAreaClicked(ConversationSettings conversationSettings){
         Intent intent = new Intent(UserConversationsActivity.this, MessagingActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("conversationId", conversationId);
-        extras.putString("userId", currentUserId);
+        extras.putSerializable("conversationSettings", conversationSettings);
 
         intent.putExtras(extras);
         startActivity(intent);

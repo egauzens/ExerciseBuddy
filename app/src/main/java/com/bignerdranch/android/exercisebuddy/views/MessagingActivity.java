@@ -3,7 +3,10 @@ package com.bignerdranch.android.exercisebuddy.views;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.ObservableList;
@@ -12,34 +15,35 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.viewmodels.MatchProfileActivityViewModel;
+import com.bignerdranch.android.exercisebuddy.adapters.MessageItemAdapter;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MessagingActivityViewModel;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 public class MessagingActivity extends AppCompatActivity {
-    /*private MessagingActivityViewModel mViewModel;
+    private MessagingActivityViewModel mViewModel;
     private RecyclerView mMessageItemsRecyclerView;
     private ObservableList.OnListChangedCallback mMessagesListener;
     private MessageItemAdapter mMessageItemAdapter;
+    private EditText mMessageEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MessagingActivityViewModel.class);
         setContentView(R.layout.activity_messaging);
-        mMessageItemAdapter = new MessageItemAdapter(mViewModel.getUserMatches(), this);
+        InitializeViewModel();
         setupRecyclerView();
-        mMessagesListener = createMessagesListener();
-        addUserMatchesListener();
+
+        mMessageEditText = (EditText) findViewById(R.id.messaging_edit_text);
     }
 
     private void InitializeViewModel(){
         Intent intent = getIntent();
-        User user = (User)intent.getSerializableExtra("user");
-        User match = (User)intent.getSerializableExtra("match");
-        mViewModel.setMatch(match);
+        ConversationSettings conversationSettings = (ConversationSettings)intent.getSerializableExtra("conversationSettings");
+        mViewModel.setConversationSettings(conversationSettings);
+        addUserMessagesListener();
     }
 
 
@@ -49,12 +53,13 @@ public class MessagingActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void addUserMatchesListener(){
-        mViewModel.getUserMatches().addOnListChangedCallback(mMessagesListener);
+    private void addUserMessagesListener(){
+        mMessagesListener = createMessagesListener();
+        mViewModel.getMessages().addOnListChangedCallback(mMessagesListener);
     }
 
     private void removeUserMatchesListener(){
-        mViewModel.getUserMatches().removeOnListChangedCallback(mMessagesListener);
+        mViewModel.getMessages().removeOnListChangedCallback(mMessagesListener);
     }
 
     private ObservableList.OnListChangedCallback createMessagesListener(){
@@ -86,20 +91,24 @@ public class MessagingActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView(){
+        mMessageItemAdapter = new MessageItemAdapter(mViewModel.getMessages(), mViewModel.getSenderId());
         mMessageItemsRecyclerView = (RecyclerView) findViewById(R.id.messages_recycler_view);
         mMessageItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mMessageItemsRecyclerView.setAdapter(mMessageItemAdapter);
     }
 
     public void sendMessage(View v){
-
+        String messageText = mMessageEditText.getText().toString();
+        mViewModel.addMessageToDb(messageText, mViewModel.getConversationId()).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), R.string.message_send_failure, Toast.LENGTH_LONG).show();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                mMessageEditText.setText("");
+            }
+        });
     }
-
-    private String addMessageToConversationsDb(String message, String conversationId){
-        // generates a unique id for the conversation and adds a child to the conversations node
-        DatabaseReference conversationDb = FirebaseDatabase.getInstance().getReference().child("conversations").child(conversationId);
-        String messageId = addMessageToDb(conversationDb, message);
-
-        return messageId;
-    }*/
 }

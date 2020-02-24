@@ -1,7 +1,6 @@
 package com.bignerdranch.android.exercisebuddy.adapters;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,8 @@ import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
 import com.bignerdranch.android.exercisebuddy.models.Conversation;
 import com.bignerdranch.android.exercisebuddy.models.Message;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
-import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -74,26 +69,25 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
         }
 
         public void bind(final Conversation conversation, final String userId, final IConversationItemClickListener listener){
+            final ConversationSettings conversationSettings = createConversationSettings(userId, conversation);
             Message lastMessage = conversation.getLastMessage();
-            final String matchUserId = getMatchUserId(conversation, userId);
-
-            mMatchNameTextView.setText(getMatchName(conversation, userId));
+            mMatchNameTextView.setText(conversationSettings.getMatchName());
             mLastMessageTextView.setText(lastMessage.getText());
             mLastMessageTimeTextView.setText(String.valueOf(lastMessage.getTime()));
             mConversationItemTextArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onConversationItemTextAreaClicked(userId, conversation.getConversationId());
+                    listener.onConversationItemTextAreaClicked(conversationSettings);
                 }
             });
             mMatchImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onConversationItemMatchImageClicked(matchUserId);
+                    listener.onConversationItemMatchImageClicked(conversationSettings.getMatchId());
                 }
             });
 
-            StorageHelper.loadProfileImageFromStorageIntoImageView(mContext, matchUserId, mMatchImage);
+            StorageHelper.loadProfileImageFromStorageIntoImageView(mContext, conversationSettings.getMatchId(), mMatchImage);
         }
 
         private String getMatchUserId(Conversation conversation, String userId){
@@ -106,6 +100,26 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
             return !conversation.getReceiverUserId().equals(userId) ?
                     conversation.getReceiverName() :
                     conversation.getSenderName();
+        }
+
+        private String getUserName(Conversation conversation, String userId){
+            return conversation.getReceiverUserId().equals(userId) ?
+                    conversation.getReceiverName() :
+                    conversation.getSenderName();
+        }
+
+        private ConversationSettings createConversationSettings(String userId, Conversation conversation){
+            String matchUserId = getMatchUserId(conversation, userId);
+            String matchName = getMatchName(conversation, userId);
+            String userName = getUserName(conversation, userId);
+
+            return new ConversationSettings(
+                    conversation.getConversationId(),
+                    userId,
+                    userName,
+                    matchUserId,
+                    matchName
+            );
         }
     }
 }

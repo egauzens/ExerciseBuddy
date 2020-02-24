@@ -6,126 +6,87 @@ import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
 import com.bignerdranch.android.exercisebuddy.models.Message;
-import com.bignerdranch.android.exercisebuddy.models.User;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MessagingActivityViewModel extends ViewModel {
-    /*public final ObservableArrayList<Message> mMessages;
-    private User mCurrentUser;
-    private User mMatchedUser;
-    private Query mMessagesDbQuery;
-    private ChildEventListener mUsersListener;
+    public final ObservableArrayList<Message> mMessages;
+    private ConversationSettings mConversationSettings;
 
     public MessagingActivityViewModel(){
         mMessages = new ObservableArrayList<>();
-
-        updateMessages();
+        mConversationSettings = null;
     }
 
     public ObservableArrayList<Message> getMessages() {
         return mMessages;
     }
 
-    public User getCurrentUser() {
-        return mCurrentUser;
+    public void setConversationSettings(ConversationSettings conversationSettings) {
+        this.mConversationSettings = conversationSettings;
+        addListenerForMessages();
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.mCurrentUser = currentUser;
-    }
-
-    public User getMatchedUser() {
-        return mMatchedUser;
-    }
-
-    public void setMatchedUser(User matchedUser) {
-        this.mMatchedUser = matchedUser;
-    }
-
-    private void updateMessages(String convoId){
-        DatabaseReference messagesDb = FirebaseDatabase.getInstance().getReference().child("messages").child(convoId);
-
-        messagesDb.addChildEventListener(new ValueEventListener() {}
-    }
-
-    private void updateQuery(){
-        resetMatches();
-        mMessagesDbQuery = FirebaseDatabase.getInstance().getReference().child("users").orderByChild("exercise").equalTo(mCurrentUser.getExercise());
-        updateDisplayedUsers();
-    }
-
-    private void resetMatches(){
-        if (!mMessages.isEmpty()){
-            mMessages.clear();
+    public String getConversationId(){
+        if (mConversationSettings == null){
+            return null;
         }
-        if (mMessagesDbQuery != null && mUsersListener != null){
-            mMessagesDbQuery.removeEventListener(mUsersListener);
-        }
+        return mConversationSettings.getConversationId();
     }
 
-    private void updateDisplayedUsers(){
-        mUsersListener = mMessagesDbQuery.addChildEventListener(new ChildEventListener() {
+    public String getSenderId(){
+        if (mConversationSettings == null){
+            return null;
+        }
+        return mConversationSettings.getUserId();
+    }
+
+    public String getSenderName(){
+        if (mConversationSettings == null){
+            return null;
+        }
+        return mConversationSettings.getUserName();
+    }
+
+    public String getReceiverId(){
+        if (mConversationSettings == null){
+            return null;
+        }
+        return mConversationSettings.getMatchId();
+    }
+
+    public String getReceiverName(){
+        if (mConversationSettings == null){
+            return null;
+        }
+        return mConversationSettings.getMatchName();
+    }
+
+    private void addListenerForMessages(){
+        final DatabaseReference conversationIdsDb = FirebaseDatabase.getInstance().getReference().child("conversations").child(getConversationId());
+        conversationIdsDb.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (dataSnapshot.exists()) {
-                    if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User addedUser = createUser(dataSnapshot);
-                        if (mCurrentUser.doesMatchWith(addedUser) && addedUser.doesMatchWith(mCurrentUser)){
-                            mMessages.add(addedUser);
-                        }
-                    }
-                }
+                Message message = createMessage(dataSnapshot);
+                mMessages.add(message);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (dataSnapshot.exists()) {
-                    if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User changedUser = createUser(dataSnapshot);
-                        for (User user : mMessages) {
-                            if (user.getUid().equals(changedUser.getUid())){
-                                if (!mCurrentUser.doesMatchWith(changedUser) || !changedUser.doesMatchWith(mCurrentUser))
-                                    mMessages.remove(user);
-                                return;
-                            }
-                        }
-                        if (mCurrentUser.doesMatchWith(changedUser) && changedUser.doesMatchWith(mCurrentUser))
-                            mMessages.add(changedUser);
-                    }
-                    else {
-                        resetMatches();
-                        updateDisplayedUsers();
-                    }
-                }
+
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if (dataSnapshot.exists()) {
-                    if (!dataSnapshot.getKey().equals(currentUser.getUid())) {
-                        User removedUser = createUser(dataSnapshot);
-                        for (User user : mMessages) {
-                            if (user.getUid().equals(removedUser.getUid())){
-                                mMessages.remove(user);
-                                break;
-                            }
-                        }
-                    }
-                    else{
-                        updateQuery();
-                    }
-                }
+
             }
 
             @Override
@@ -140,29 +101,28 @@ public class MessagingActivityViewModel extends ViewModel {
         });
     }
 
-    private User createUser(DataSnapshot dataSnapshot){
-        String userName = dataSnapshot.child("name").getValue().toString();
-        String exercisePreference = dataSnapshot.child("exercise").getValue().toString();
-        String userGender = dataSnapshot.child("userGender").getValue().toString();
-        String userDob = dataSnapshot.child("dateOfBirth").getValue().toString();
-        String userExperienceLevel = dataSnapshot.child("userExperienceLevel").getValue().toString();
-        String userProfileImageUri = dataSnapshot.child("profileImageUri").getValue().toString();
-        String userDescription = dataSnapshot.child("userDescription").getValue().toString();
-        String genderPreference = dataSnapshot.child("genderPreference").getValue().toString();
-        int lowerAgePreference = Integer.parseInt(dataSnapshot.child("lowerAgePreference").getValue().toString());
-        int upperAgePreference = Integer.parseInt(dataSnapshot.child("upperAgePreference").getValue().toString());
-        String experienceLevelPreference = dataSnapshot.child("experienceLevelPreference").getValue().toString();
-        return new User(userName,
-                userGender,
-                userDob,
-                userExperienceLevel,
-                exercisePreference,
-                userProfileImageUri,
-                userDescription,
-                genderPreference,
-                lowerAgePreference,
-                upperAgePreference,
-                experienceLevelPreference,
-                dataSnapshot.getKey());
-    }*/
+    public Task<Void> addMessageToDb(String message, String conversationId){
+        // generates a unique id for the message and adds a child to the conversations node
+        DatabaseReference newMessageDb = FirebaseDatabase.getInstance().getReference().child("conversations").child(conversationId).push();
+        Map<String, Object> newMessageSettings = new HashMap<>();
+        newMessageSettings.put("time", System.currentTimeMillis());
+        newMessageSettings.put("content", message);
+        newMessageSettings.put("senderUserId", getSenderId());
+        newMessageSettings.put("senderName", getSenderName());
+        newMessageSettings.put("receiverUserId", getReceiverId());
+        newMessageSettings.put("receiverName", getReceiverName());
+        return newMessageDb.updateChildren(newMessageSettings);
+    }
+
+    private Message createMessage(DataSnapshot dataSnapshot){
+        String messageId = dataSnapshot.getKey();
+        String senderUserId = dataSnapshot.child("senderUserId").getValue(String.class);
+        String senderName = dataSnapshot.child("senderName").getValue(String.class);
+        String receiverUserId = dataSnapshot.child("receiverUserId").getValue(String.class);
+        String receiverName = dataSnapshot.child("receiverName").getValue(String.class);
+        String content = dataSnapshot.child("content").getValue(String.class);
+        long time = dataSnapshot.child("time").getValue(Long.class);
+
+        return new Message(content, senderUserId, senderName, receiverUserId, receiverName, time, messageId);
+    }
 }
