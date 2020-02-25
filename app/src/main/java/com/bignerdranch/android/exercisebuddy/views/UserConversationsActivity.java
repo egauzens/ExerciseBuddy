@@ -57,11 +57,12 @@ public class UserConversationsActivity extends AppCompatActivity implements ICon
         return new ObservableList.OnListChangedCallback() {
             @Override
             public void onChanged(ObservableList sender) {
+                return;
             }
 
             @Override
             public void onItemRangeChanged(ObservableList sender, int positionStart, int itemCount) {
-
+                mConversationItemAdapter.notifyItemChanged(positionStart);
             }
 
             @Override
@@ -71,7 +72,7 @@ public class UserConversationsActivity extends AppCompatActivity implements ICon
 
             @Override
             public void onItemRangeMoved(ObservableList sender, int fromPosition, int toPosition, int itemCount) {
-
+                return;
             }
 
             @Override

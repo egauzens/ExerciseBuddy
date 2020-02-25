@@ -15,7 +15,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class UserConversationsActivityViewModel extends ViewModel {
     public final ObservableArrayList<Conversation> mUserConversations;
@@ -82,11 +82,40 @@ public class UserConversationsActivityViewModel extends ViewModel {
 
                 if (cachedConversation == null){
                     Conversation conversation = new Conversation(latestMessage, conversationId);
-                    mUserConversations.add(conversation);
+                    if (mUserConversations.isEmpty())
+                    {
+                        mUserConversations.add(conversation);
+                    }
+                    else
+                    {
+                        // make sure that the conversations are in order by time
+                        for (int i = 0; i < mUserConversations.size(); i++) {
+                            long conversationTime = mUserConversations.get(i).getLastMessage().getTime();
+                            if (latestMessage.getTime() > conversationTime) {
+                                mUserConversations.add(i, conversation);
+                                break;
+                            }
+                            if (i == mUserConversations.size()-1){
+                                // it is the oldest conversation in the list so it goes at the end
+                                mUserConversations.add(conversation);
+                                break;
+                            }
+                        }
+                    }
                 }
-                else{
+                else
+                {
+                    cachedConversation.setLastMessage(latestMessage);
                     int sourceIndex = mUserConversations.indexOf(cachedConversation);
-                    Collections.rotate(mUserConversations.subList(0, sourceIndex + 1), 1);
+                    if (sourceIndex != 0) {
+                        // if it's not already the first conversation in the list then move it to be the first one
+                        CopyOnWriteArrayList<Conversation> conversationsAboveCachedConversation = new CopyOnWriteArrayList<Conversation>(mUserConversations.subList(0, sourceIndex));
+                        mUserConversations.subList(0, sourceIndex).clear();
+                        mUserConversations.addAll(1, conversationsAboveCachedConversation);
+
+                    }
+                    // update the first conversation to have the latest message
+                    mUserConversations.set(0, cachedConversation);
                 }
             }
 
