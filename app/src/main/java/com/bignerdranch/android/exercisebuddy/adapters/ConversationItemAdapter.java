@@ -12,11 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.R;
+import com.bignerdranch.android.exercisebuddy.helpers.DateTimeHelpers;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
 import com.bignerdranch.android.exercisebuddy.models.Conversation;
 import com.bignerdranch.android.exercisebuddy.models.Message;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
+import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.StorageHelper;
 
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class ConversationItemAdapter extends RecyclerView.Adapter<ConversationIt
             Message lastMessage = conversation.getLastMessage();
             mMatchNameTextView.setText(conversationSettings.getMatchName());
             mLastMessageTextView.setText(lastMessage.getText());
-            mLastMessageTimeTextView.setText(String.valueOf(lastMessage.getTime()));
+            mLastMessageTimeTextView.setText(DateTimeHelpers.getTimeFromMilliseconds(lastMessage.getTime()));
             mConversationItemTextArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

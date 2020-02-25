@@ -16,10 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserProfileSettings;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
+import com.bignerdranch.android.exercisebuddy.helpers.UserProfileSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.StorageHelper;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UpdateUserProfileActivityViewModel;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
+import com.bignerdranch.android.exercisebuddy.helpers.UserSelectionsHelpers;
 import com.bumptech.glide.Glide;
 
 import java.util.Arrays;

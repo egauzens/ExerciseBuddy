@@ -5,13 +5,12 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
+import com.bignerdranch.android.exercisebuddy.helpers.StorageHelper;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel;
 
 public abstract class ProfileActivity extends AppCompatActivity {

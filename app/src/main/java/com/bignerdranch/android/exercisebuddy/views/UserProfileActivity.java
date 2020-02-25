@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserProfileSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.UserProfileSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel;
 
 public class UserProfileActivity extends ProfileActivity {

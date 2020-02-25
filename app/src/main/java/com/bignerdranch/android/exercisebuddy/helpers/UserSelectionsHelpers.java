@@ -1,4 +1,4 @@
-package com.bignerdranch.android.exercisebuddy.staticHelpers;
+package com.bignerdranch.android.exercisebuddy.helpers;
 
 import android.content.Context;
 

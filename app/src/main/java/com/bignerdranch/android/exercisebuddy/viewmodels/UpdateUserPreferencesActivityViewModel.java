@@ -1,6 +1,6 @@
 package com.bignerdranch.android.exercisebuddy.viewmodels;
 
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserPreferencesSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.UserPreferencesSettings;
 
 import androidx.lifecycle.ViewModel;
 

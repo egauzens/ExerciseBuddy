@@ -1,23 +1,21 @@
 package com.bignerdranch.android.exercisebuddy.adapters;
 
-import android.graphics.Color;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.models.Conversation;
+import com.bignerdranch.android.exercisebuddy.helpers.DateTimeHelpers;
 import com.bignerdranch.android.exercisebuddy.models.Message;
 
 import java.util.List;
 
-public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.MessageItemHolder> {
+public class MessageItemAdapter extends RecyclerView.Adapter {
+    private static final int MESSAGE_SENT = 1;
+    private static final int MESSAGE_RECEIVED = 2;
     private List<Message> mUserMessages;
     private String mUserId;
 
@@ -28,16 +26,38 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
 
     @NonNull
     @Override
-    public MessageItemAdapter.MessageItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
-        return new MessageItemAdapter.MessageItemHolder(layoutInflater, parent);
+        if (viewType == MESSAGE_SENT){
+            return new MessageItemAdapter.SentMessageItemHolder(layoutInflater, parent);
+        } else if (viewType == MESSAGE_RECEIVED){
+            return new MessageItemAdapter.ReceivedMessageItemHolder(layoutInflater, parent);
+        }
+        return null;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageItemAdapter.MessageItemHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Message message = mUserMessages.get(position);
-        holder.bind(message, mUserId);
+        switch (holder.getItemViewType()) {
+            case MESSAGE_SENT:
+                ((SentMessageItemHolder) holder).bind(message);
+                break;
+            case MESSAGE_RECEIVED:
+                ((ReceivedMessageItemHolder) holder).bind(message);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Message message = mUserMessages.get(position);
+        if (message.getSenderId().equals(mUserId)){
+            return MESSAGE_SENT;
+        }
+        else{
+            return MESSAGE_RECEIVED;
+        }
     }
 
     @Override
@@ -45,60 +65,36 @@ public class MessageItemAdapter extends RecyclerView.Adapter<MessageItemAdapter.
         return mUserMessages.size();
     }
 
-    class MessageItemHolder extends RecyclerView.ViewHolder{
-        private LinearLayout mMessageLinearLayout;
+    class SentMessageItemHolder extends RecyclerView.ViewHolder{
         private TextView mMessageContentTextView;
         private TextView mMessageTimeTextView;
-        private DisplayMetrics mDisplayMetrics;
 
-        public MessageItemHolder(LayoutInflater inflater, ViewGroup parent){
-            super(inflater.inflate(R.layout.item_message, parent, false));
-            mDisplayMetrics = parent.getResources().getDisplayMetrics();
-            mMessageLinearLayout = (LinearLayout) itemView.findViewById(R.id.message_linear_layout);
+        public SentMessageItemHolder(LayoutInflater inflater, ViewGroup parent){
+            super(inflater.inflate(R.layout.item_message_sent, parent, false));
+
             mMessageContentTextView = (TextView) itemView.findViewById(R.id.message_content_text_view);
             mMessageTimeTextView = (TextView) itemView.findViewById(R.id.message_time_text_view);
         }
 
-        public void bind(final Message message, final String userId){
-            setMessageAppearance(message, userId);
-
+        public void bind(final Message message){
             mMessageContentTextView.setText(message.getText());
-            mMessageTimeTextView.setText(String.valueOf(message.getTime()));
+            mMessageTimeTextView.setText(DateTimeHelpers.getTimeFromMilliseconds(message.getTime()));
+        }
+    }
+
+    class ReceivedMessageItemHolder extends RecyclerView.ViewHolder{
+        private TextView mMessageContentTextView;
+        private TextView mMessageTimeTextView;
+
+        public ReceivedMessageItemHolder(LayoutInflater inflater, ViewGroup parent){
+            super(inflater.inflate(R.layout.item_message_received, parent, false));
+            mMessageContentTextView = (TextView) itemView.findViewById(R.id.message_content_text_view);
+            mMessageTimeTextView = (TextView) itemView.findViewById(R.id.message_time_text_view);
         }
 
-        private void setMessageAppearance(Message message, String userId){
-            if (message.getSenderId().equals(userId)){
-                RecyclerView.LayoutParams layoutParams =(RecyclerView.LayoutParams) mMessageLinearLayout.getLayoutParams();
-                int desiredMarginStart = getPxInDp(50, mDisplayMetrics);
-                layoutParams.setMarginStart(desiredMarginStart);
-                mMessageLinearLayout.setLayoutParams(layoutParams);
-                int green = Color.parseColor("#b5cf5e");
-                mMessageLinearLayout.setBackgroundColor(green);
-            }
-            else{
-                RecyclerView.LayoutParams layoutParams =(RecyclerView.LayoutParams) mMessageLinearLayout.getLayoutParams();
-                int desiredMarginStart = getPxInDp(50, mDisplayMetrics);
-                layoutParams.setMarginEnd(desiredMarginStart);
-                mMessageLinearLayout.setLayoutParams(layoutParams);
-                int grey = Color.parseColor("#dcdcdc");
-                mMessageLinearLayout.setBackgroundColor(grey);
-            }
-        }
-
-        private String getMatchUserId(Conversation conversation, String userId){
-            return !conversation.getReceiverUserId().equals(userId) ?
-                    conversation.getReceiverUserId() :
-                    conversation.getSenderUserId();
-        }
-
-        private String getMatchName(Conversation conversation, String userId){
-            return !conversation.getReceiverUserId().equals(userId) ?
-                    conversation.getReceiverName() :
-                    conversation.getSenderName();
-        }
-
-        private int getPxInDp(int desiredDpValue, DisplayMetrics displayMetrics){
-            return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, desiredDpValue, displayMetrics);
+        public void bind(final Message message){
+            mMessageContentTextView.setText(message.getText());
+            mMessageTimeTextView.setText(DateTimeHelpers.getTimeFromMilliseconds(message.getTime()));
         }
     }
 }

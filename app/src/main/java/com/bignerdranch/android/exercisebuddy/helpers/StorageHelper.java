@@ -1,4 +1,4 @@
-package com.bignerdranch.android.exercisebuddy.staticHelpers;
+package com.bignerdranch.android.exercisebuddy.helpers;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,18 +57,18 @@ public class StorageHelper {
 
     public static void loadProfileImageFromStorageIntoImageView(final Context context, String userId, final ImageView imageView){
         final StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profileImages").child(userId);
-
+        final RoundedCorners roundedCorners = new RoundedCorners(20);
         filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Glide.with(context).load(uri).into(imageView);
+                Glide.with(context).load(uri).transform(roundedCorners).into(imageView);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 // There is no profile image in storage bc the user never set a profile image. We must set the image view or else the
                 // last loaded image can be displayed: http://bumptech.github.io/glide/doc/getting-started.html#listview-and-recyclerview
-                Glide.with(context).load(R.mipmap.ic_launcher).into(imageView);
+                Glide.with(context).load(R.drawable.missing_profile_image).transform(roundedCorners).into(imageView);
             }
         });
     }

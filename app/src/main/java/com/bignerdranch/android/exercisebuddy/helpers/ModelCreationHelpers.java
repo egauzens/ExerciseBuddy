@@ -1,4 +1,4 @@
-package com.bignerdranch.android.exercisebuddy.staticHelpers;
+package com.bignerdranch.android.exercisebuddy.helpers;
 
 import com.bignerdranch.android.exercisebuddy.models.User;
 import com.google.firebase.database.DataSnapshot;

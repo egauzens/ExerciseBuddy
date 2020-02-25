@@ -6,7 +6,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
 import com.bignerdranch.android.exercisebuddy.models.Message;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -18,12 +18,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MessagingActivityViewModel extends ViewModel {
-    public final ObservableArrayList<Message> mMessages;
+    private final ObservableArrayList<Message> mMessages;
     private ConversationSettings mConversationSettings;
 
     public MessagingActivityViewModel(){
         mMessages = new ObservableArrayList<>();
         mConversationSettings = null;
+    }
+
+    public int getMessagesCount(){
+        if (mMessages.isEmpty()){
+            return 0;
+        }
+        return mMessages.size();
     }
 
     public ObservableArrayList<Message> getMessages() {

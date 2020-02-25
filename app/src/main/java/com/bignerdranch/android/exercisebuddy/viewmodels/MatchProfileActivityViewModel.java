@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ModelCreationHelpers;
+import com.bignerdranch.android.exercisebuddy.helpers.ModelCreationHelpers;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.databinding.ActivityMatchProfileBinding;
+import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MatchProfileActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityViewModel;
 
@@ -62,11 +63,15 @@ public class MatchProfileActivity extends UserProfileActivity {
         Intent intent = new Intent(MatchProfileActivity.this, MessagingActivity.class);
         Bundle extras = new Bundle();
         // The logged in user is the match user id bc we are currently viewing the profile of a match (so the profile user id is set to that of the match id)
-        extras.putSerializable("matchUserId", mViewModel.getProfileUserId());
-        extras.putSerializable("loggedInUserId", ((MatchProfileActivityViewModel)mViewModel).getMatchUserId());
+        ConversationSettings conversationSettings = new ConversationSettings(
+                ((MatchProfileActivityViewModel)mViewModel).getConversationId(),
+                ((MatchProfileActivityViewModel)mViewModel).getMatchUserId(),
+                ((MatchProfileActivityViewModel)mViewModel).getMatchUserName(),
+                mViewModel.getProfileUserId(),
+                mViewModel.getProfileUserName());
+        extras.putSerializable("conversationSettings", conversationSettings);
         intent.putExtras(extras);
         startActivity(intent);
-        finish();
         return;
     }
 

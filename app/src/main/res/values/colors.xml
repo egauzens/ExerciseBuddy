@@ -3,4 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="sentMessageBackground">#b5cf5e</color>
+    <color name="receivedMessageBackground">#dcdcdc</color>
+    <color name="black">#000000</color>
 </resources>

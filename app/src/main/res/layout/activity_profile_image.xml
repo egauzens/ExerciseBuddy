@@ -18,21 +18,15 @@
             android:textSize="28dp"
             android:layout_margin="12dp"
             android:textAlignment="center"/>
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <ImageView
+            android:id="@+id/profile_image_view"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
-            android:layout_gravity="center">
-            <ImageView
-                android:id="@+id/profile_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:scaleType="centerCrop"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintTop_toTopOf="parent"
-                android:onClick="uploadProfileImage"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:src="@drawable/missing_profile_image"
+            android:onClick="uploadProfileImage"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

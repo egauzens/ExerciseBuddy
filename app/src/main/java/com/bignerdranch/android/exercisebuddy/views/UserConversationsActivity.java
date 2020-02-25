@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.adapters.ConversationItemAdapter;
 import com.bignerdranch.android.exercisebuddy.interfaces.IConversationItemClickListener;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserConversationsActivityViewModel;
 
 public class UserConversationsActivity extends AppCompatActivity implements IConversationItemClickListener {

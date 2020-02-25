@@ -6,7 +6,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.lifecycle.ViewModel;
 
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ModelCreationHelpers;
+import com.bignerdranch.android.exercisebuddy.helpers.ModelCreationHelpers;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;

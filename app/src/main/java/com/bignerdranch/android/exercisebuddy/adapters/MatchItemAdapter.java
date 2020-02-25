@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bignerdranch.android.exercisebuddy.interfaces.IMatchItemClickListener;
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.models.User;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.StorageHelper;
+import com.bignerdranch.android.exercisebuddy.helpers.StorageHelper;
 
 import java.util.List;
 

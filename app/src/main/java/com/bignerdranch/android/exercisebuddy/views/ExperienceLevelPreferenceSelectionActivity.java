@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.viewmodels.ExperienceLevelPreferenceSelectionActivityViewModel;
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserSelectionsHelpers;
+import com.bignerdranch.android.exercisebuddy.helpers.UserSelectionsHelpers;
 
 import java.util.Arrays;
 

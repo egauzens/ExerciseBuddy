@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.UserPreferencesSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.UserPreferencesSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserPreferencesActivityViewModel;
 
 public class UserPreferencesActivity extends AppCompatActivity {

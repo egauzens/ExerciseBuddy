@@ -1,8 +1,10 @@
 package com.bignerdranch.android.exercisebuddy.views;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -16,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.adapters.MessageItemAdapter;
-import com.bignerdranch.android.exercisebuddy.staticHelpers.ConversationSettings;
+import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MessagingActivityViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -76,6 +78,7 @@ public class MessagingActivity extends AppCompatActivity {
             @Override
             public void onItemRangeInserted(ObservableList sender, int positionStart, int itemCount) {
                 mMessageItemAdapter.notifyItemRangeInserted(positionStart, itemCount);
+                mMessageItemsRecyclerView.scrollToPosition(mViewModel.getMessagesCount()-1);
             }
 
             @Override
@@ -93,11 +96,13 @@ public class MessagingActivity extends AppCompatActivity {
     private void setupRecyclerView(){
         mMessageItemAdapter = new MessageItemAdapter(mViewModel.getMessages(), mViewModel.getSenderId());
         mMessageItemsRecyclerView = (RecyclerView) findViewById(R.id.messages_recycler_view);
-        mMessageItemsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+        mMessageItemsRecyclerView.setLayoutManager(layoutManager);
         mMessageItemsRecyclerView.setAdapter(mMessageItemAdapter);
     }
 
-    public void sendMessage(View v){
+    public void sendMessage(final View v){
         String messageText = mMessageEditText.getText().toString();
         mViewModel.addMessageToDb(messageText, mViewModel.getConversationId()).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -110,5 +115,10 @@ public class MessagingActivity extends AppCompatActivity {
                 mMessageEditText.setText("");
             }
         });
+    }
+
+    public void hideSoftKeyboard(View view){
+        InputMethodManager imm =(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
