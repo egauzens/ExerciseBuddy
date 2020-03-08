@@ -3,6 +3,8 @@ package com.bignerdranch.android.exercisebuddy.views;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -11,6 +13,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ObservableList;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.adapters.MessageItemAdapter;
+import com.bignerdranch.android.exercisebuddy.databinding.ActivityMessagingBinding;
 import com.bignerdranch.android.exercisebuddy.helpers.ConversationSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.MessagingActivityViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,8 +38,12 @@ public class MessagingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityMessagingBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_messaging);
         mViewModel = ViewModelProviders.of(this).get(MessagingActivityViewModel.class);
-        setContentView(R.layout.activity_messaging);
+        binding.setViewModel(mViewModel);
+        binding.setLifecycleOwner(this);
+
+        setupToolbar();
         InitializeViewModel();
         setupRecyclerView();
 
@@ -47,7 +56,6 @@ public class MessagingActivity extends AppCompatActivity {
         mViewModel.setConversationSettings(conversationSettings);
         addUserMessagesListener();
     }
-
 
     @Override
     protected void onDestroy() {
@@ -120,5 +128,53 @@ public class MessagingActivity extends AppCompatActivity {
     public void hideSoftKeyboard(View view){
         InputMethodManager imm =(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    private void setupToolbar() {
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.messaging_tool_bar);
+        // must set a title before calling setSupportActionBar so that binding works
+        // https://stackoverflow.com/questions/26486730/in-android-app-toolbar-settitle-method-has-no-effect-application-name-is-shown/32582780
+        appToolbar.setTitle("");
+        setSupportActionBar(appToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.match_toolbar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                goBack();
+                return true;
+            case R.id.block_user_menu_item:
+                blockUser();
+                return true;
+            case R.id.unblock_user_menu_item:
+                unblockUser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void goBack(){
+        finish();
+    }
+
+    private void blockUser(){
+
+    }
+
+    private void unblockUser(){
+
     }
 }

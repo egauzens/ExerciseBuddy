@@ -2,10 +2,12 @@ package com.bignerdranch.android.exercisebuddy.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.ObservableList;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,7 +30,7 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UserMatchesActivityViewModel.class);
         setContentView(R.layout.activity_user_matches);
-        mMatchItemAdapter = new MatchItemAdapter(mViewModel.getUserMatches(), this);
+        setupToolbar();
         setupRecyclerView();
         addUserMatchesListener();
         if (mViewModel.getCurrentUserId().isEmpty()){
@@ -82,6 +84,8 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         };
 
     private void setupRecyclerView(){
+        mMatchItemAdapter = new MatchItemAdapter(mViewModel.getUserMatches(), this);
+
         mMatchItemsRecyclerView = (RecyclerView) findViewById(R.id.matches_recycler_view);
         mMatchItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mMatchItemsRecyclerView.setAdapter(mMatchItemAdapter);
@@ -101,36 +105,75 @@ public class UserMatchesActivity extends AppCompatActivity implements IMatchItem
         return;
     }
 
-    public void goToUserProfile(View v){
+    private void setupToolbar(){
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(appToolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.tool_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.matches_menu_item:
+                return true;
+            case R.id.profile_menu_item:
+                goToUserProfile();
+                return true;
+            case R.id.preferences_menu_item:
+                goToUserPreferences();
+                return true;
+            case R.id.conversations_menu_item:
+                goToUserConversations();
+                return true;
+            case R.id.logout_menu_item:
+                logoutUser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void goToUserProfile(){
         Intent intent = new Intent(UserMatchesActivity.this, UserProfileActivity.class);
         Bundle extras = new Bundle();
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         extras.putSerializable("profileUserId", mViewModel.getCurrentUserId());
         intent.putExtras(extras);
-        startActivityForResult(intent, 3);
+        startActivity(intent);
         return;
     }
 
-    public void goToUserPreferences(View v){
+    private void goToUserPreferences(){
         Intent intent = new Intent(UserMatchesActivity.this, UserPreferencesActivity.class);
         Bundle extras = new Bundle();
-        extras.putSerializable("userId", mViewModel.getCurrentUserId());
-        intent.putExtras(extras);
-        startActivityForResult(intent, 2);
-        return;
-    }
-
-    public void goToUserConversations(View v){
-        Intent intent = new Intent(UserMatchesActivity.this, UserConversationsActivity.class);
-        Bundle extras = new Bundle();
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         extras.putSerializable("userId", mViewModel.getCurrentUserId());
         intent.putExtras(extras);
         startActivity(intent);
         return;
     }
 
-    public void logoutUser(View v){
+    private void goToUserConversations(){
+        Intent intent = new Intent(UserMatchesActivity.this, UserConversationsActivity.class);
+        Bundle extras = new Bundle();
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        extras.putSerializable("userId", mViewModel.getCurrentUserId());
+        intent.putExtras(extras);
+        startActivity(intent);
+        return;
+    }
+
+    private void logoutUser(){
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(UserMatchesActivity.this, LoginOrRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
         return;

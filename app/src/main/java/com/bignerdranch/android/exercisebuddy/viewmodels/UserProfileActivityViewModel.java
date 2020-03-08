@@ -26,6 +26,7 @@ public class UserProfileActivityViewModel extends AndroidViewModel {
     private ContentResolver mApplicationContentResolver;
     protected User mProfileUser;
     protected MutableLiveData<Boolean> mAreAllUsersLoaded;
+    private MutableLiveData<String> mProfileUserName;
     protected boolean mIsProfileUserLoaded;
 
     public UserProfileActivityViewModel(Application application){
@@ -35,6 +36,7 @@ public class UserProfileActivityViewModel extends AndroidViewModel {
         mProfileUser = null;
         mAreAllUsersLoaded = new MutableLiveData<>(false);
         mIsProfileUserLoaded = false;
+        mProfileUserName = new MutableLiveData<>("");
     }
 
     public String getProfileUserId() {
@@ -54,11 +56,8 @@ public class UserProfileActivityViewModel extends AndroidViewModel {
         setProfileUser();
     }
 
-    public String getProfileUserName(){
-        if (mAreAllUsersLoaded.getValue()){
-            return mProfileUser.getName();
-        }
-        return null;
+    public LiveData<String> getProfileUserName(){
+        return mProfileUserName;
     }
 
     public int getProfileUserAge(){
@@ -110,6 +109,7 @@ public class UserProfileActivityViewModel extends AndroidViewModel {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mProfileUser = ModelCreationHelpers.createUser(dataSnapshot);
                 mIsProfileUserLoaded = true;
+                mProfileUserName.setValue(mProfileUser.getName());
                 setAreAllUsersLoaded();
             }
 

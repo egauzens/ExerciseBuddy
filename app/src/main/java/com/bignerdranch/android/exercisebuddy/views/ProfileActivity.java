@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
 import com.bignerdranch.android.exercisebuddy.R;
@@ -15,7 +16,6 @@ import com.bignerdranch.android.exercisebuddy.viewmodels.UserProfileActivityView
 
 public abstract class ProfileActivity extends AppCompatActivity {
     protected UserProfileActivityViewModel mViewModel;
-    private TextView mNameTextView;
     private TextView mAgeTextView;
     private TextView mGenderTextView;
     private TextView mExperienceLevelTextView;
@@ -27,8 +27,8 @@ public abstract class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mViewModel = getViewModel();
         setContentView();
+        setupToolbar();
 
-        mNameTextView = (TextView) findViewById(R.id.name_text_view);
         mAgeTextView = (TextView) findViewById(R.id.age_text_view);
         mGenderTextView = (TextView) findViewById(R.id.gender_text_view);
         mExperienceLevelTextView = (TextView) findViewById(R.id.experience_level_text_view);
@@ -54,9 +54,11 @@ public abstract class ProfileActivity extends AppCompatActivity {
         }
     };
 
-    public abstract UserProfileActivityViewModel getViewModel();
+    protected abstract UserProfileActivityViewModel getViewModel();
 
-    public abstract void setContentView();
+    protected abstract void setupToolbar();
+
+    protected abstract void setContentView();
 
     protected void InitializeViewModel(){
         Intent intent = getIntent();
@@ -64,11 +66,10 @@ public abstract class ProfileActivity extends AppCompatActivity {
         mViewModel.setProfileUserId(profileUserId);
     }
 
-    private void InitializeUI() {
+    protected void InitializeUI() {
         if (!mViewModel.getAreAllUsersLoaded().getValue()){
             return;
         }
-        mNameTextView.setText(getString(R.string.name) + " " + mViewModel.getProfileUserName());
         mAgeTextView.setText(getString(R.string.age) + " " + mViewModel.getProfileUserAge());
         mGenderTextView.setText(getString(R.string.gender) + " " + mViewModel.getProfileUserGender());
         mExperienceLevelTextView.setText(getString(R.string.experience_level) + " " + mViewModel.getProfileUserExperienceLevel());

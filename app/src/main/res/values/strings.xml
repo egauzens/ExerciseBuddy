@@ -59,4 +59,9 @@
     <string name="go_to_chat">Go to chat</string>
     <string name="conversations">Conversations</string>
     <string name="message_send_failure">Message failed to send!</string>
+    <string name="matches">Matches</string>
+    <string name="block_user">Block user</string>
+    <string name="unblock_user">Unblock user</string>
+    <string name="go_back">Go back</string>
+    <string name="match_profile">Match profile</string>
 </resources>

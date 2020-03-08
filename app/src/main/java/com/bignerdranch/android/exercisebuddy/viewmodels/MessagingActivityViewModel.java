@@ -3,6 +3,8 @@ package com.bignerdranch.android.exercisebuddy.viewmodels;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.ObservableArrayList;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.bignerdranch.android.exercisebuddy.models.Message;
@@ -19,11 +21,13 @@ import java.util.Map;
 
 public class MessagingActivityViewModel extends ViewModel {
     private final ObservableArrayList<Message> mMessages;
+    private MutableLiveData<String> mMatchUserName;
     private ConversationSettings mConversationSettings;
 
     public MessagingActivityViewModel(){
         mMessages = new ObservableArrayList<>();
         mConversationSettings = null;
+        mMatchUserName = new MutableLiveData<>("");
     }
 
     public int getMessagesCount(){
@@ -37,8 +41,13 @@ public class MessagingActivityViewModel extends ViewModel {
         return mMessages;
     }
 
+    public LiveData<String> getMatchUserName(){
+        return mMatchUserName;
+    }
+
     public void setConversationSettings(ConversationSettings conversationSettings) {
         this.mConversationSettings = conversationSettings;
+        this.mMatchUserName.setValue(getReceiverName());
         addListenerForMessages();
     }
 

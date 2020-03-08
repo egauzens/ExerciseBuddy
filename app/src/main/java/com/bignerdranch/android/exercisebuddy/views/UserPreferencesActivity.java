@@ -3,17 +3,21 @@ package com.bignerdranch.android.exercisebuddy.views;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bignerdranch.android.exercisebuddy.R;
 import com.bignerdranch.android.exercisebuddy.helpers.UserPreferencesSettings;
 import com.bignerdranch.android.exercisebuddy.viewmodels.UserPreferencesActivityViewModel;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class UserPreferencesActivity extends AppCompatActivity {
     protected UserPreferencesActivityViewModel mViewModel;
@@ -28,6 +32,7 @@ public class UserPreferencesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(UserPreferencesActivityViewModel.class);
         setContentView(R.layout.activity_user_preferences);
+        setupToolbar();
 
         mExercisePreferenceTextView = (TextView) findViewById(R.id.exercise_preference_text_view);
         mGenderPreferenceTextView = (TextView) findViewById(R.id.gender_preference_text_view);
@@ -107,5 +112,76 @@ public class UserPreferencesActivity extends AppCompatActivity {
                 mViewModel.getUpperAgePreference(),
                 mViewModel.getExperienceLevelPreference()
         );
+    }
+
+    private void setupToolbar(){
+        Toolbar appToolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(appToolbar);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.tool_bar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.profile_menu_item:
+                goToUserProfile();
+                return true;
+            case R.id.preferences_menu_item:
+                return true;
+            case R.id.matches_menu_item:
+                goToUserMatches();
+                return true;
+            case R.id.conversations_menu_item:
+                goToUserConversations();
+                return true;
+            case R.id.logout_menu_item:
+                logoutUser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void goToUserProfile(){
+        Intent intent = new Intent(UserPreferencesActivity.this, UserProfileActivity.class);
+        Bundle extras = new Bundle();
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        extras.putSerializable("profileUserId", mViewModel.getUserId());
+        intent.putExtras(extras);
+        startActivity(intent);
+        return;
+    }
+
+    public void goToUserMatches(){
+        Intent intent = new Intent(UserPreferencesActivity.this, UserMatchesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        return;
+    }
+
+    public void goToUserConversations(){
+        Intent intent = new Intent(UserPreferencesActivity.this, UserConversationsActivity.class);
+        Bundle extras = new Bundle();
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        extras.putSerializable("userId", mViewModel.getUserId());
+        intent.putExtras(extras);
+        startActivity(intent);
+        return;
+    }
+
+    public void logoutUser(){
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(UserPreferencesActivity.this, LoginOrRegisterActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+        return;
     }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
         <data>
                 <variable
                     name="viewModel"
@@ -10,35 +10,15 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:orientation="vertical">
-                <LinearLayout
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/tool_bar"
+                    app:title="@string/matches"
+                    android:theme="@style/AppToolbarStyle"
+                    app:titleTextColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center">
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/profile"
-                            android:onClick="goToUserProfile"/>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/preferences"
-                            android:onClick="goToUserPreferences"/>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/logout"
-                            android:onClick="logoutUser"/>
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="@string/conversations"
-                            android:onClick="goToUserConversations"/>
-                </LinearLayout>
+                    android:background="@color/colorPrimary"
+                    android:elevation="4dp"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/matches_recycler_view"
                     android:layout_width="match_parent"

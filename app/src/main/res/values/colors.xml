@@ -6,4 +6,5 @@
     <color name="sentMessageBackground">#b5cf5e</color>
     <color name="receivedMessageBackground">#dcdcdc</color>
     <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

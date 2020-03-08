@@ -198,6 +198,6 @@ public class MatchProfileActivityViewModel extends UserProfileActivityViewModel 
         newMessageDb.child("senderUserId").setValue(getMatchUserId());
         newMessageDb.child("senderName").setValue(getMatchUserName());
         newMessageDb.child("receiverUserId").setValue(getProfileUserId());
-        newMessageDb.child("receiverName").setValue(getProfileUserName());
+        newMessageDb.child("receiverName").setValue(getProfileUserName().getValue());
     }
 }
